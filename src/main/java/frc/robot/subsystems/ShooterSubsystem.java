@@ -4,12 +4,24 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ExampleSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
+
+  private SparkFlex shooterMotor1 = new SparkFlex(60, MotorType.kBrushless);
+  private SparkFlex shooterMotor2 = new SparkFlex(61, MotorType.kBrushless);
+
   /** Creates a new ExampleSubsystem. */
-  public ExampleSubsystem() {}
+  public ShooterSubsystem() {
+
+    SmartDashboard.putNumber("shooterMotorSpeed", 0);
+    
+  }
 
   /**
    * Example command factory method.
@@ -38,6 +50,15 @@ public class ExampleSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
+    shooterMotor1.set(shooterMotorPower);
+    shooterMotor2.set(shooterMotorPower);
+    
+
+    // shooterMotor1.setVoltage(shooterMotorPower);
+    // shooterMotor2.setVoltage(shooterMotorPower);
+
+    SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());
   }
 
   @Override
