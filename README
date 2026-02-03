@@ -1,1 +1,8 @@
 # 2026 Superior Roboworks Robot
+
+## Tasks TODO for Programming Students
+
+- Move the `src/main/java/frc/robot/Constants.java` to the [2026 repo](https://github.com/SuperiorRoboworksTeam857/2025Reefscape/blob/main/src/main/java/frc/robot/Constants.java) (in the same location)
+- Reconfigure the Phoenix 6 imports towards that [documentation](https://v6.docs.ctr-electronics.com/en/stable/)
+- Work with setVoltage() on the shooter wheels
+ - Create some methods inside of the shooter to "setTargetSpeed"
