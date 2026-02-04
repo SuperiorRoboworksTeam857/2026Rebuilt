@@ -6,3 +6,7 @@
 - Reconfigure the Phoenix 6 imports towards that [documentation](https://v6.docs.ctr-electronics.com/en/stable/)
 - Work with setVoltage() on the shooter wheels
  - Create some methods inside of the shooter to "setTargetSpeed"
+
+## Notes in Comparison to 2025
+
+- Drivebase 3in less in both directions than last year for wheelbase
