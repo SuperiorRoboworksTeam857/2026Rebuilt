@@ -123,10 +123,9 @@ public final class Constants {
           canCoderID, angleOffset);
     }
 
-    public static final class IntakeConstants {
-      public static final int intakeMotor = 22;// needs to be changed
-      public static final double intakeSpeedMultiplier = 0.2;// needs to be changed
-      public static final int beamBreak = 0;
+    public static final class ShooterConstants {
+      public static final int shooterMotor = 22;// needs to be changed
+      public static final double shooterSpeedMultiplier = 0.2;// needs to be change
     }
 
                                                                                            // TO BE CHANGED
