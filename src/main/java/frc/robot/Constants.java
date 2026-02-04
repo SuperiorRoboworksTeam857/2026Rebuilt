@@ -25,8 +25,7 @@ import frc.lib.config.SwerveModuleConstants;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+  public static class Swerve {
     public static final double fastDriveSpeedMultiplier = 1.1; // NEEDS TO BE CHANGED
     public static final double normalDriveSpeedMultiplier = 0.7; // NEEDS TO BE CHANGED
     public static final double slowDriveSpeedMultiplier = 0.25; // NEEDS TO BE CHANGED
@@ -40,8 +39,7 @@ public final class Constants {
     public static final double wheelDiameter = Units.inchesToMeters(4); // NEEDS TO BE CHANGED
     public static final double wheelCircumference = wheelDiameter * Math.PI;
     public static final double driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0); // 6.75:1 // MIGHT NEED
-                                                                                               // TO BE CHANGED
-    public static final double angleGearRatio = (150.0 / 7.0); // MIGHT NEED TO BE CHANGED
+ public static final double angleGearRatio = (150.0 / 7.0); // MIGHT NEED TO BE CHANGED
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
         new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
         new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
@@ -57,8 +55,7 @@ public final class Constants {
     public static final double angleKI = 0.0;
     public static final double angleKD = 0.0;
     public static final double angleKFF = 0.0;
-
-    /* Drive Motor PID Values */
+ /* Drive Motor PID Values */
     public static final double driveKP = 0.1;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
@@ -76,8 +73,7 @@ public final class Constants {
     /* Swerve Profiling Values */
     public static final double maxSpeed = 4.5; // meters per second //4.5
     public static final double maxAngularVelocity = 6; // 11.5
-
-    /* Neutral Modes */
+ /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
     public static final IdleMode driveNeutralMode = IdleMode.kBrake;
 
@@ -98,8 +94,7 @@ public final class Constants {
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
-
-    /* Front Right Module - Module 1 */
+ /* Front Right Module - Module 1 */
     public static final class Mod1 {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 13;
@@ -118,8 +113,7 @@ public final class Constants {
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
-
-    /* Back Right Module - Module 3 */
+/* Back Right Module - Module 3 */
     public static final class Mod3 {
       public static final int driveMotorID = 11;
       public static final int angleMotorID = 10;
@@ -135,6 +129,20 @@ public final class Constants {
       public static final int beamBreak = 0;
     }
 
+                                                                                           // TO BE CHANGED
+  }
+  public static class OperatorConstants {
+    public static final int kDriverControllerPort = 0;
+    
+   
+
+   
+
+   
+
+   
+
+    
   }
 
 }

@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix6.hardware.CANcoder;
 //import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -37,7 +37,7 @@ public class SwerveModule {
   
     private RelativeEncoder driveEncoder;
     private RelativeEncoder integratedAngleEncoder;
-    private CANCoder angleEncoder;
+    private CANcoder angleEncoder;
   
     private final SparkClosedLoopController driveController;
     private final SparkClosedLoopController angleController;
@@ -53,7 +53,7 @@ public class SwerveModule {
       angleOffset = moduleConstants.angleOffset;
   
       /* Angle Encoder Config */
-      angleEncoder = new CANCoder(moduleConstants.cancoderID);
+      angleEncoder = new CANcoder(moduleConstants.cancoderID);
       configAngleEncoder();
   
       /* Angle Motor Config */
