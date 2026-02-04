@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class Shooter extends SubsystemBase {
 
   private SparkFlex shooterMotor1 = new SparkFlex(60, MotorType.kBrushless);
   private SparkFlex shooterMotor2 = new SparkFlex(61, MotorType.kBrushless);
 
   /** Creates a new ExampleSubsystem. */
-  public ShooterSubsystem() {
+  public Shooter() {
 
     SmartDashboard.putNumber("shooterMotorSpeed", 0);
     
