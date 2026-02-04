@@ -123,13 +123,24 @@ public final class Constants {
           canCoderID, angleOffset);
     }
 
-    public static final class ShooterConstants {
-      public static final int shooterMotor = 22;// needs to be changed
-      public static final double shooterSpeedMultiplier = 0.2;// needs to be change
-    }
+    
 
                                                                                            // TO BE CHANGED
   }
+
+  public static final class ShooterConstants {
+    public static final int shooterMotor1 = 60;
+    public static final int shooterMotor2 = 61;
+    public static final double shooterSpeedMultiplier = 0.2;// needs to be change
+    public static final int turretMotor = 0; // needs to be changed
+    
+    
+  }
+  public static final class IntakeConstant {
+    public static final int intakeMotor = 0; // needs to be changed
+  }
+
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
     
