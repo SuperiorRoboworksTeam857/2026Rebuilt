@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+
 //import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -93,7 +94,7 @@ public class SwerveModule {
       //REV: Removes burnFlash() and restoreFactoryDefaults(). Use the ResetMode and PersistMode options in SparkBase.configure() instead.
 
       CANCoderUtil.setCANCoderBusUsage(angleEncoder, CCUsage.kMinimal);
-      angleEncoder.configAllSettings(Robot.ctreConfigs.swerveCanCoderConfig);
+      angleEncoder.getConfigurator().apply(Robot.ctreConfigs.swerveCanCoderConfig);
     }
   
     private void configAngleMotor() {
@@ -194,7 +195,7 @@ public class SwerveModule {
     }
   
     public Rotation2d getCanCoder() {
-      return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition());
+      return Rotation2d.fromDegrees(angleEncoder.getAbsolutePosition().getValueAsDouble());
     }
   
     public SwerveModuleState getState() {
@@ -202,11 +203,11 @@ public class SwerveModule {
     }
   
     public SwerveModulePosition getPosition() {
-      SmartDashboard.putNumber("angleEncoder position " + moduleNumber, angleEncoder.getPosition());
+      SmartDashboard.putNumber("angleEncoder position " + moduleNumber, angleEncoder.getPosition().getValueAsDouble());
       SmartDashboard.putNumber("angleOffset degrees " + moduleNumber, angleOffset.getDegrees());
   
       return new SwerveModulePosition(
           driveEncoder.getPosition(),
-          Rotation2d.fromDegrees(angleEncoder.getPosition() - angleOffset.getDegrees()));
+          Rotation2d.fromDegrees(angleEncoder.getPosition().getValueAsDouble() - angleOffset.getDegrees()));
     }
 }
