@@ -10,13 +10,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.Swerve.IntakeConstants;
 import frc.robot.Constants.Swerve.ShooterConstants;
 
 public class Shooter extends SubsystemBase {
 
-  private SparkFlex shooterMotor1 = new SparkFlex(60, MotorType.kBrushless);
-  private SparkFlex shooterMotor2 = new SparkFlex(61, MotorType.kBrushless);
+  private SparkFlex shooterMotor1 = new SparkFlex(Constants.ShooterConstants.shooterMotor1, MotorType.kBrushless);
+  private SparkFlex shooterMotor2 = new SparkFlex(Constants.ShooterConstants.shooterMotor2, MotorType.kBrushless);
 
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
