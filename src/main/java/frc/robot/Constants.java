@@ -34,12 +34,12 @@ public final class Constants {
     public static final double robotMass = 50;
     public static final double momentOfInertia = 0;
     public static final boolean invertGyro = true; // Always ensure Gyro is CCW+ CW-
-    public static final double trackWidth = Units.inchesToMeters(21.75); // NEEDS TO BE CHANGED
-    public static final double wheelBase = Units.inchesToMeters(21.75); // NEEDS TO BE CHANGED
+    public static final double trackWidth = Units.inchesToMeters(18.75); // NEEDS TO BE CHANGED
+    public static final double wheelBase = Units.inchesToMeters(18.75); // NEEDS TO BE CHANGED
     public static final double wheelDiameter = Units.inchesToMeters(4); // NEEDS TO BE CHANGED
     public static final double wheelCircumference = wheelDiameter * Math.PI;
     public static final double driveGearRatio = (50.0 / 14.0) * (17.0 / 27.0) * (45.0 / 15.0); // 6.75:1 // MIGHT NEED
- public static final double angleGearRatio = (150.0 / 7.0); // MIGHT NEED TO BE CHANGED
+    public static final double angleGearRatio = (150.0 / 7.0); // MIGHT NEED TO BE CHANGED
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
         new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
         new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
@@ -55,7 +55,7 @@ public final class Constants {
     public static final double angleKI = 0.0;
     public static final double angleKD = 0.0;
     public static final double angleKFF = 0.0;
- /* Drive Motor PID Values */
+    /* Drive Motor PID Values */
     public static final double driveKP = 0.1;
     public static final double driveKI = 0.0;
     public static final double driveKD = 0.0;
@@ -73,7 +73,7 @@ public final class Constants {
     /* Swerve Profiling Values */
     public static final double maxSpeed = 4.5; // meters per second //4.5
     public static final double maxAngularVelocity = 6; // 11.5
- /* Neutral Modes */
+    /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
     public static final IdleMode driveNeutralMode = IdleMode.kBrake;
 
@@ -94,7 +94,8 @@ public final class Constants {
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
- /* Front Right Module - Module 1 */
+
+    /* Front Right Module - Module 1 */
     public static final class Mod1 {
       public static final int driveMotorID = 12;
       public static final int angleMotorID = 13;
@@ -113,7 +114,8 @@ public final class Constants {
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
-/* Back Right Module - Module 3 */
+
+    /* Back Right Module - Module 3 */
     public static final class Mod3 {
       public static final int driveMotorID = 11;
       public static final int angleMotorID = 10;
@@ -122,37 +124,52 @@ public final class Constants {
       public static final SwerveModuleConstants constants = new SwerveModuleConstants(driveMotorID, angleMotorID,
           canCoderID, angleOffset);
     }
-
-    
-
-                                                                                           // TO BE CHANGED
   }
 
+  // constants for the Shooter
+  // includes the 2 motors for the actual flywheel
+  //   and one for the turret that changes the angle of the shooter
   public static final class ShooterConstants {
-    public static final int shooterMotor1 = 60;
-    public static final int shooterMotor2 = 61;
-    public static final double shooterSpeedMultiplier = 0.2;// needs to be change
-    public static final int turretMotor = 0; // needs to be changed
-    
-    
+    public static final int shooterMotor1 = 22;
+    public static final int shooterMotor2 = 23;
+    public static final double shooterSpeedMultiplier = 0.2; // basic speed multiplier
+    public static final int turretMotor = 21; 
+
+    // PID constants for the spindexer wheel
+    // TODO: mess with these values to get something right
+    public static final int shooterKP = 0;
+    public static final int shooterKI = 0;
+    public static final int shooterKD = 0;
+
+    // boolean to see if we should use the PID loop (for testing)
+    public static final boolean usePID = false;
   }
-  public static final class IntakeConstant {
+
+  // constants for the Shooter
+  // 2.9.26 unknown what this will look like
+  public static final class IntakeConstants {
     public static final int intakeMotor = 0; // needs to be changed
   }
 
+  // constants for the Spindexer
+  // 2.9.26 unknown what this will look like
+  public static final class SpindexerConstants {
+    public static final int spindexerWheel = 24; // will spin in the center
+    public static final double spindexerSpeedMultiplier = 0.2; // basic speed multiplier
+
+    // PID constants for the spindexer wheel
+    // TODO: mess with these values to get something right
+    public static final int spindexerKP = 0;
+    public static final int spindexerKI = 0;
+    public static final int spindexerKD = 0;
+
+    // boolean to see if we should use the PID loop (for testing)
+    public static final boolean usePID = false;
+  }
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
-    
-   
 
-   
-
-   
-
-   
-
-    
   }
 
 }
