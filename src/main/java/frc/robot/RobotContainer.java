@@ -7,7 +7,7 @@ package frc.robot;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
-import frc.robot.subsystems.Swerve;
+// import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   /* Subsystems */
   private final Shooter m_Shooter = new Shooter();
-  private final Swerve m_swerve = new Swerve();
+  // private final Swerve m_swerve = new Swerve();
   private final Spindexer m_spindexer = new Spindexer();
 
   /* Controllers */
