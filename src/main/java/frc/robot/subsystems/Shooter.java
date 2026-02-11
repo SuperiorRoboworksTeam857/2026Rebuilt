@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.FeedForwardConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -51,13 +52,13 @@ public class Shooter extends SubsystemBase {
     shooterMotorConfig.closedLoop
       .p(Constants.ShooterConstants.shooterKP)
       .i(Constants.ShooterConstants.shooterKI)
-      .d(Constants.ShooterConstants.shooterKD);
+      .d(Constants.ShooterConstants.shooterKD).feedForward.apply(new FeedForwardConfig());
     // (hint: mess with these in the constants file)
 
     // now APPLY the configuration to the shooter motors
     // do both
-    shooterMotor1.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    shooterMotor2.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // shooterMotor1.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // shooterMotor2.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // these last two parameters basically say:
     // 1: reset the configuration safely (if it fails, then don't do something CRAZY)
     // 2: persist even if the robot power goes off (do we want these changes to be temporary)
