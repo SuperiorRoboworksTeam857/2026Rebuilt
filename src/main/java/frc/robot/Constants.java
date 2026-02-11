@@ -137,9 +137,9 @@ public final class Constants {
 
     // PID constants for the spindexer wheel
     // TODO: mess with these values to get something right
-    public static final int shooterKP = 0;
-    public static final int shooterKI = 0;
-    public static final int shooterKD = 0;
+    public static final double shooterKP = 0.1;
+    public static final double shooterKI = 0;
+    public static final double shooterKD = 0;
 
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
@@ -155,13 +155,13 @@ public final class Constants {
   // 2.9.26 unknown what this will look like
   public static final class SpindexerConstants {
     public static final int spindexerWheel = 24; // will spin in the center
-    public static final double spindexerSpeedMultiplier = 0.2; // basic speed multiplier
+    public static final double spindexerSpeedMultiplier = 1; // basic speed multiplier
 
     // PID constants for the spindexer wheel
     // TODO: mess with these values to get something right
-    public static final int spindexerKP = 0;
-    public static final int spindexerKI = 0;
-    public static final int spindexerKD = 0;
+    public static final double spindexerKP = 0.1;
+    public static final double spindexerKI = 0;
+    public static final double spindexerKD = 0;
 
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
