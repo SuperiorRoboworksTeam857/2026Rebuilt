@@ -76,7 +76,7 @@ public class Shooter extends SubsystemBase {
 
   public void runShooter(double speed) {
     shooterMotor1.set(speed * Constants.ShooterConstants.shooterSpeedMultiplier);
-    shooterMotor2.set(speed * Constants.ShooterConstants.shooterSpeedMultiplier);
+    shooterMotor2.set(-speed * Constants.ShooterConstants.shooterSpeedMultiplier);
   }
 
   @Override
@@ -85,10 +85,12 @@ public class Shooter extends SubsystemBase {
     // default system
     double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
     // now apply this to either the controller or basic speed
-    if(Constants.ShooterConstants.usePID)
+    if(Constants.ShooterConstants.usePID) {
       setShooterVelocity(shooterMotorPower);
-    else
+    }
+    else {
       runShooter(shooterMotorPower);
+    }
 
     // put both of these numbers on the smartdashboard
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());

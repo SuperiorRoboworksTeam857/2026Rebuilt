@@ -132,7 +132,7 @@ public final class Constants {
   public static final class ShooterConstants {
     public static final int shooterMotor1 = 22;
     public static final int shooterMotor2 = 23;
-    public static final double shooterSpeedMultiplier = 0.2; // basic speed multiplier
+    public static final double shooterSpeedMultiplier = 1; // basic speed multiplier
     public static final int turretMotor = 21; 
 
     // PID constants for the spindexer wheel
@@ -166,10 +166,20 @@ public final class Constants {
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
   }
+  // constants for the Feeder
+  // 2.9.26 unknown what this will look like
+  public static final class FeederConstants {
+    public static final int feederWheel = 25;
+    public static final double feederSpeedMultiplier = 1; // basic speed multiplier
 
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    // PID constants for the feeder wheel
+    // TODO: mess with these values to get something right
+    public static final double feederKP = 0.1;
+    public static final double feederKI = 0;
+    public static final double feederKD = 0;
 
+    // boolean to see if we should use the PID loop (for testing)
+    public static final boolean usePID = false;
   }
 
 }

@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.Autos;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
 // import frc.robot.subsystems.Swerve;
@@ -22,6 +23,8 @@ public class RobotContainer {
   private final Shooter m_Shooter = new Shooter();
   // private final Swerve m_swerve = new Swerve();
   private final Spindexer m_spindexer = new Spindexer();
+
+  private final Feeder m_feeder = new Feeder();
 
   /* Controllers */
   private final Joystick gamepad = new Joystick(0);
