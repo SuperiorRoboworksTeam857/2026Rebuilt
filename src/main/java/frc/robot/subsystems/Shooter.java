@@ -26,6 +26,7 @@ public class Shooter extends SubsystemBase {
   // then, this allows us to make a setpoint so that the motors can reach (and maintain the points themselves)
   private SparkFlex shooterMotor1 = new SparkFlex(Constants.ShooterConstants.shooterMotor1, MotorType.kBrushless);
   private SparkFlex shooterMotor2 = new SparkFlex(Constants.ShooterConstants.shooterMotor2, MotorType.kBrushless);
+  private SparkFlex turretMotor = new SparkFlex(Constants.ShooterConstants.turretMotor, MotorType.kBrushless);
 
   // then we want to define our configuration
   // and have it setup to be the default
@@ -33,10 +34,12 @@ public class Shooter extends SubsystemBase {
   private SparkFlexConfig shooterMotorConfig1 = new SparkFlexConfig();
   private SparkFlexConfig shooterMotorConfig2 = new SparkFlexConfig();
   private double targetShooterSpeed = 0.5;
+  private SparkFlexConfig turretMotorConfig = new SparkFlexConfig();
   // then we have the actual closed loop controllers
   // these ensure that we are running at the expected setpoint (velocity, position, etc.)
   private SparkClosedLoopController shooterMotor1Controller = shooterMotor1.getClosedLoopController();
   private SparkClosedLoopController shooterMotor2Controller = shooterMotor2.getClosedLoopController();
+  private SparkClosedLoopController turretMotorController = turretMotor.getClosedLoopController();
   // these basically just do the same thing as .set()
   // but we are doing a .setSetpoint
   // - the controller takes in the current encoder value and the P I D constants
@@ -57,6 +60,10 @@ public class Shooter extends SubsystemBase {
       .d(Constants.ShooterConstants.shooterKD).feedForward.apply(new FeedForwardConfig());
     shooterMotorConfig2.apply(shooterMotorConfig1);
     // (hint: mess with these in the constants file)
+    turretMotorConfig.closedLoop
+      .p(Constants.ShooterConstants.turretKP)
+      .i(Constants.ShooterConstants.turretKI)
+      .d(Constants.ShooterConstants.turretKD);
 
     shooterMotorConfig2.inverted(true);
 
@@ -67,9 +74,13 @@ public class Shooter extends SubsystemBase {
     // do both
     shooterMotor1.configure(shooterMotorConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     shooterMotor2.configure(shooterMotorConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    turretMotor.configure(turretMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // these last two parameters basically say:
     // 1: reset the configuration safely (if it fails, then don't do something CRAZY)
     // 2: persist even if the robot power goes off (do we want these changes to be temporary)
+  }
+  public void setTurretPosition(double position) {
+    turretMotorController.setSetpoint(position, ControlType.kPosition);
   }
 
   public void setShooterVelocity(double velocity){
@@ -113,6 +124,9 @@ public class Shooter extends SubsystemBase {
     else {
       runShooter(shooterMotorPower);
     }
+
+    double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0);
+      setTurretPosition(turretMotorPosition);
 
     // put both of these numbers on the smartdashboard
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());

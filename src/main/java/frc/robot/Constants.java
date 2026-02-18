@@ -141,6 +141,11 @@ public final class Constants {
     public static final double shooterKI = 0;
     public static final double shooterKD = 0;
 
+    //Turret constants for the turret
+    public static final double turretKP = 0.1;
+    public static final double turretKI = 0;
+    public static final double turretKD = 0;
+
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
   }
