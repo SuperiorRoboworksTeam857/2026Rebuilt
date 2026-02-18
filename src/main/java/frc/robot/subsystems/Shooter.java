@@ -10,6 +10,7 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.FeedForwardConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
@@ -53,7 +54,7 @@ public class Shooter extends SubsystemBase {
     shooterMotorConfig1.closedLoop
       .p(Constants.ShooterConstants.shooterKP)
       .i(Constants.ShooterConstants.shooterKI)
-      .d(Constants.ShooterConstants.shooterKD);
+      .d(Constants.ShooterConstants.shooterKD).feedForward.apply(new FeedForwardConfig());
     shooterMotorConfig2.apply(shooterMotorConfig1);
     // (hint: mess with these in the constants file)
 
