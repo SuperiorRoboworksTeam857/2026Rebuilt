@@ -169,7 +169,8 @@ public final class Constants {
   // constants for the Feeder
   // 2.9.26 unknown what this will look like
   public static final class FeederConstants {
-    public static final int feederWheel = 25;
+    public static final int feederWheelFront = 25;
+    public static final int feederWheelBack = 26;
     public static final double feederSpeedMultiplier = 1; // basic speed multiplier
 
     // PID constants for the feeder wheel

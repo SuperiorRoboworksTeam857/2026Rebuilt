@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,8 +29,9 @@ public class Shooter extends SubsystemBase {
   // then we want to define our configuration
   // and have it setup to be the default
   // one for BOTH motors should be fine
-  private SparkFlexConfig shooterMotorConfig = new SparkFlexConfig();
-
+  private SparkFlexConfig shooterMotorConfig1 = new SparkFlexConfig();
+  private SparkFlexConfig shooterMotorConfig2 = new SparkFlexConfig();
+  private double targetShooterSpeed = 0.5;
   // then we have the actual closed loop controllers
   // these ensure that we are running at the expected setpoint (velocity, position, etc.)
   private SparkClosedLoopController shooterMotor1Controller = shooterMotor1.getClosedLoopController();
@@ -48,16 +50,22 @@ public class Shooter extends SubsystemBase {
     // this takes in the PID parameters from constants and applies it to the config
     // applying it to the configuration ALONE won't change the motor
     // we still have to connect the config object to the motor
-    shooterMotorConfig.closedLoop
+    shooterMotorConfig1.closedLoop
       .p(Constants.ShooterConstants.shooterKP)
       .i(Constants.ShooterConstants.shooterKI)
       .d(Constants.ShooterConstants.shooterKD);
+    shooterMotorConfig2.apply(shooterMotorConfig1);
     // (hint: mess with these in the constants file)
+
+    shooterMotorConfig2.inverted(true);
+
+    shooterMotorConfig1.idleMode(IdleMode.kCoast);
+    shooterMotorConfig2.idleMode(IdleMode.kCoast);
 
     // now APPLY the configuration to the shooter motors
     // do both
-    shooterMotor1.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    shooterMotor2.configure(shooterMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    shooterMotor1.configure(shooterMotorConfig1, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    shooterMotor2.configure(shooterMotorConfig2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // these last two parameters basically say:
     // 1: reset the configuration safely (if it fails, then don't do something CRAZY)
     // 2: persist even if the robot power goes off (do we want these changes to be temporary)
@@ -76,7 +84,19 @@ public class Shooter extends SubsystemBase {
 
   public void runShooter(double speed) {
     shooterMotor1.set(speed * Constants.ShooterConstants.shooterSpeedMultiplier);
-    shooterMotor2.set(-speed * Constants.ShooterConstants.shooterSpeedMultiplier);
+    shooterMotor2.set(speed * Constants.ShooterConstants.shooterSpeedMultiplier);
+  }
+  public void powerShooter(double speed) {
+    if(Constants.ShooterConstants.usePID)
+      setShooterVelocity(speed);
+    else
+      runShooter(speed);
+  }
+  public void startShooter() {
+    powerShooter(targetShooterSpeed); //Change Later with something fancier
+  }
+  public void stopShooter() {
+    powerShooter(0);
   }
 
   @Override
@@ -84,6 +104,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     // default system
     double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
+    targetShooterSpeed = shooterMotorPower;
     // now apply this to either the controller or basic speed
     if(Constants.ShooterConstants.usePID) {
       setShooterVelocity(shooterMotorPower);

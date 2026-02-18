@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,6 +35,8 @@ public class Spindexer extends SubsystemBase {
       .i(Constants.SpindexerConstants.spindexerKI)
       .d(Constants.SpindexerConstants.spindexerKD);
 
+    spindexerConfig.idleMode(IdleMode.kBrake);
+
     spindexerMotor.configure(spindexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
@@ -43,6 +46,22 @@ public class Spindexer extends SubsystemBase {
   
   public void runSpindexer(double speed) {
     spindexerMotor.set(speed * Constants.SpindexerConstants.spindexerSpeedMultiplier);
+  }
+  public void powerSpindexer(double speed) {
+    if(Constants.SpindexerConstants.usePID)
+      setSpindexerVelocity(speed);
+    else
+      runSpindexer(speed);
+  }
+  public void startSpindexer() {
+    powerSpindexer(0.2);
+
+  }
+  public void stopSpindexer() {
+    powerSpindexer(0);
+  }
+  public void reverseSpindexer() {
+    powerSpindexer(-0.2);
   }
 
   @Override

@@ -5,12 +5,18 @@
 package frc.robot;
 
 import frc.robot.commands.Autos;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
+import frc.robot.subsystems.Swerve;
+
+import static edu.wpi.first.units.Units.Rotation;
+
 // import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -21,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class RobotContainer {
   /* Subsystems */
   private final Shooter m_Shooter = new Shooter();
-  // private final Swerve m_swerve = new Swerve();
+  private final Swerve m_Swerve = new Swerve();
   private final Spindexer m_spindexer = new Spindexer();
 
   private final Feeder m_feeder = new Feeder();
@@ -31,8 +37,30 @@ public class RobotContainer {
   private final Joystick driverStick = new Joystick(1);
   private final Joystick buttonBox = new Joystick(2);
 
+  /* Drive Controls */
+  private final int translationAxis = Joystick.AxisType.kY.value;
+  private final int strafeAxis = Joystick.AxisType.kX.value;
+  private final int rotationAxis = Joystick.AxisType.kZ.value;
+
+  private final JoystickButton robotCentric = new JoystickButton(driverStick, 4);
+  private final JoystickButton zeroGyro = new JoystickButton(driverStick, 3);
+
+  private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
+  private final JoystickButton highSpeed = new JoystickButton(driverStick,1);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+    m_Swerve.setDefaultCommand(
+      new TeleopSwerve(
+        m_Swerve, 
+        () -> -driverStick.getRawAxis(translationAxis), 
+        () -> driverStick.getRawAxis(strafeAxis), 
+        () -> driverStick.getRawAxis(rotationAxis), 
+        () -> robotCentric.getAsBoolean() , 
+        () -> slowSpeed.getAsBoolean(), 
+        () -> highSpeed.getAsBoolean() 
+      )
+    );
     // Configure the trigger bindings
     configureBindings();
   }
