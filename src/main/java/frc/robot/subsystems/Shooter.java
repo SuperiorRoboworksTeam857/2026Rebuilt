@@ -132,6 +132,17 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
   }
+  public boolean isShooterAtSpeed(){
+    int target = 4000;
+    return target <= shooterMotor1.getEncoder().getVelocity();
+  }
+  public void runShooterThenRest(double speed,Feeder feeder, Spindexer spindexer){
+    setShooterVelocity(speed);
+    if(isShooterAtSpeed()){
+      feeder.startFeeder();
+      spindexer.startSpindexer();
+    }
+  }
 
   @Override
   public void simulationPeriodic() {

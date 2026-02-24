@@ -15,13 +15,22 @@ import static edu.wpi.first.units.Units.Rotation;
 
 // import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
@@ -46,27 +55,84 @@ public class RobotContainer {
   private final JoystickButton zeroGyro = new JoystickButton(driverStick, 3);
 
   private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
-  private final JoystickButton highSpeed = new JoystickButton(driverStick,1);
+  private final JoystickButton highSpeed = new JoystickButton(driverStick, 1);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  private final JoystickButton shootShooter = new JoystickButton(gamepad,
+      Constants.ControllerConstants.shootShooterButton);
+  private final POVButton reverseSpindexer = new POVButton(gamepad, Constants.ControllerConstants.reverseSpindexer);
+  private final POVButton forwardSpindexer = new POVButton(gamepad, Constants.ControllerConstants.forwardSpindexer);
+  private final POVButton reverseFeeder = new POVButton(gamepad, Constants.ControllerConstants.reverseFeeder);
+  private final POVButton forwardFeeder = new POVButton(gamepad, Constants.ControllerConstants.forwardFeeder);
+
+  /**
+   * The container for the robot. Contains subsystems, OI devices, and commands.
+   */
   public RobotContainer() {
     m_Swerve.setDefaultCommand(
-      new TeleopSwerve(
-        m_Swerve, 
-        () -> -driverStick.getRawAxis(translationAxis), 
-        () -> driverStick.getRawAxis(strafeAxis), 
-        () -> driverStick.getRawAxis(rotationAxis), 
-        () -> robotCentric.getAsBoolean() , 
-        () -> slowSpeed.getAsBoolean(), 
-        () -> highSpeed.getAsBoolean() 
-      )
-    );
+        new TeleopSwerve(
+            m_Swerve,
+            () -> -driverStick.getRawAxis(translationAxis),
+            () -> driverStick.getRawAxis(strafeAxis),
+            () -> driverStick.getRawAxis(rotationAxis),
+            () -> robotCentric.getAsBoolean(),
+            () -> slowSpeed.getAsBoolean(),
+            () -> highSpeed.getAsBoolean()));
     // Configure the trigger bindings
     configureBindings();
   }
 
   private void configureBindings() {
-    
+    shootShooter.whileTrue(
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> m_Shooter.startShooter(), m_Shooter),
+            new WaitUntilCommand(m_Shooter::isShooterAtSpeed),
+            new InstantCommand(
+                () -> m_feeder.startFeeder(), m_feeder),
+            new InstantCommand(
+                () -> m_spindexer.startSpindexer(), m_spindexer))
+
+    );
+    // shootShooter.whileTrue(
+    //   new RunCommand(
+    //     () -> m_Shooter.runShooterThenRest(20,m_feeder,m_spindexer),m_Shooter)
+    // );
+    shootShooter.onFalse(
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> m_Shooter.stopShooter(), m_Shooter),
+            new InstantCommand(
+                () -> m_feeder.stopFeeder(), m_feeder),
+            new InstantCommand(
+                () -> m_spindexer.stopSpindexer(), m_spindexer))
+
+    );
+
+    reverseSpindexer.whileTrue(
+      new InstantCommand(
+        () -> m_spindexer.reverseSpindexer(),m_spindexer
+      ).onlyIf(
+        () -> !forwardSpindexer.getAsBoolean()
+      )
+    );
+    forwardSpindexer.whileTrue(
+      new InstantCommand(
+        () -> m_spindexer.startSpindexer(),m_spindexer
+      )
+    );    
+    reverseFeeder.whileTrue(
+      new InstantCommand(
+        () -> m_feeder.reverseFeeder(),m_feeder
+      ).onlyIf(
+        () -> !forwardFeeder.getAsBoolean()
+      )
+    );    
+    forwardFeeder.whileTrue(
+      new InstantCommand(
+        () -> m_feeder.startFeeder(),m_feeder
+      )
+    );
+
   }
 
   /**

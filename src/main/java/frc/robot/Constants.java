@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.lib.config.SwerveModuleConstants;
 
 /**
@@ -187,6 +188,14 @@ public final class Constants {
 
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
+  }
+
+  public static final class ControllerConstants {
+    public static final int shootShooterButton = XboxController.Button.kY.value;
+    public static final int reverseSpindexer = 270;
+    public static final int forwardSpindexer = 90;
+    public static final int reverseFeeder = 180;
+    public static final int forwardFeeder = 0;
   }
 
 }
