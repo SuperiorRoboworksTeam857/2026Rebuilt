@@ -130,12 +130,12 @@ public final class Constants {
 
   // constants for the Shooter
   // includes the 2 motors for the actual flywheel
-  //   and one for the turret that changes the angle of the shooter
+  // and one for the turret that changes the angle of the shooter
   public static final class ShooterConstants {
     public static final int shooterMotor1 = 22;
     public static final int shooterMotor2 = 23;
     public static final double shooterSpeedMultiplier = 1; // basic speed multiplier
-    public static final int turretMotor = 21; 
+    public static final int turretMotor = 21;
 
     // PID constants for the spindexer wheel
     // TODO: mess with these values to get something right
@@ -143,19 +143,13 @@ public final class Constants {
     public static final double shooterKI = 0;
     public static final double shooterKD = 0;
 
-    //Turret constants for the turret
+    // Turret constants for the turret
     public static final double turretKP = 0.1;
     public static final double turretKI = 0;
     public static final double turretKD = 0;
 
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
-  }
-
-  // constants for the Shooter
-  // 2.9.26 unknown what this will look like
-  public static final class IntakeConstants {
-    public static final int intakeMotor = 0; // needs to be changed
   }
 
   // constants for the Spindexer
@@ -173,6 +167,7 @@ public final class Constants {
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = false;
   }
+
   // constants for the Feeder
   // 2.9.26 unknown what this will look like
   public static final class FeederConstants {
@@ -192,10 +187,29 @@ public final class Constants {
 
   public static final class ControllerConstants {
     public static final int shootShooterButton = XboxController.Button.kY.value;
+    public static final int intakeInButton = XboxController.Button.kRightBumper.value;
+    public static final int intakeOutButton = XboxController.Button.kLeftBumper.value;
+    public static final int alignAndShoot = XboxController.Axis.kRightTrigger.value;
+    public static final int intakeAndSpindex = XboxController.Axis.kLeftTrigger.value;
     public static final int reverseSpindexer = 270;
     public static final int forwardSpindexer = 90;
     public static final int reverseFeeder = 180;
     public static final int forwardFeeder = 0;
+  }
+
+  public static final class IntakeConstants {
+    public static final int intakeMotorLeft = -1; // change later
+    public static final int intakeMotorRight = -2;
+    public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
+
+    // PID constants for the feeder wheel
+    // TODO: mess with these values to get something right
+    public static final double intakeKP = 0.1;
+    public static final double intakeKI = 0;
+    public static final double intakeKD = 0;
+
+    // boolean to see if we should use the PID loop (for testing)
+    public static final boolean usePID = false;
   }
 
 }

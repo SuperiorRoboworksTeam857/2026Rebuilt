@@ -24,6 +24,7 @@ public class Spindexer extends SubsystemBase {
   private SparkFlex spindexerMotor = new SparkFlex(Constants.SpindexerConstants.spindexerWheel, MotorType.kBrushless);
   private SparkFlexConfig spindexerConfig = new SparkFlexConfig(); // to handle the PID loop of the middle loop
   private SparkClosedLoopController spindexerController = spindexerMotor.getClosedLoopController();
+  private double targetSpindexerSpeed = 0;
 
   /** Creates a new ExampleSubsystem. */
   public Spindexer() {
@@ -54,14 +55,14 @@ public class Spindexer extends SubsystemBase {
       runSpindexer(speed);
   }
   public void startSpindexer() {
-    powerSpindexer(0.2);
+    powerSpindexer(targetSpindexerSpeed);
 
   }
   public void stopSpindexer() {
     powerSpindexer(0);
   }
   public void reverseSpindexer() {
-    powerSpindexer(-0.2);
+    powerSpindexer(-targetSpindexerSpeed);
   }
 
   @Override
@@ -69,11 +70,12 @@ public class Spindexer extends SubsystemBase {
     // grab from the dashboard the speed for the spindexer and set it
     // default 0 so it doesn't run when we don't want it to
     double spindexerMotorPower = SmartDashboard.getNumber("spindexerMotorSpeed", 0f);
+    targetSpindexerSpeed = spindexerMotorPower;
     // choose between PID control and just setting the power to the motor based on the constant
-    if(Constants.SpindexerConstants.usePID)
-      setSpindexerVelocity(spindexerMotorPower);
-    else
-      runSpindexer(spindexerMotorPower);
+    // if(Constants.SpindexerConstants.usePID)
+    //   setSpindexerVelocity(spindexerMotorPower);
+    // else
+    //   runSpindexer(spindexerMotorPower);
 
     SmartDashboard.putNumber("spindexer motor actual RPM", spindexerMotor.getEncoder().getVelocity());
   }

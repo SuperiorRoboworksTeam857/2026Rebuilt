@@ -27,6 +27,7 @@ public class Feeder extends SubsystemBase {
   private SparkFlexConfig feederConfigBack = new SparkFlexConfig(); // to handle the PID loop of the middle loop
   private SparkClosedLoopController feederControllerFront = feederMotorFront.getClosedLoopController();
   private SparkClosedLoopController feederControllerBack = feederMotorBack.getClosedLoopController();
+  private double targetFeederSpeed = 0;
 
   /** Creates a new ExampleSubsystem. */
   public Feeder() {
@@ -69,13 +70,13 @@ public class Feeder extends SubsystemBase {
       runFeeder(speed);
   }
   public void startFeeder() {
-    powerFeeder(0.4);
+    powerFeeder(targetFeederSpeed);
   }
   public void stopFeeder() {
     powerFeeder(0);
   }
   public void reverseFeeder() {
-    powerFeeder(-0.2);
+    powerFeeder(-targetFeederSpeed);
   }
 
   @Override
@@ -83,11 +84,12 @@ public class Feeder extends SubsystemBase {
     // grab from the dashboard the speed for the feeder and set it
     // default 0 so it doesn't run when we don't want it to
     double feederMotorPower = SmartDashboard.getNumber("feederMotorSpeed", 0f);
+    targetFeederSpeed = feederMotorPower;
     // choose between PID control and just setting the power to the motor based on the constant
-    if(Constants.FeederConstants.usePID)
-      setFeederVelocity(feederMotorPower);
-    else
-      runFeeder(feederMotorPower);
+    // if(Constants.FeederConstants.usePID)
+    //   setFeederVelocity(feederMotorPower);
+    // else
+    //   runFeeder(feederMotorPower);
 
     SmartDashboard.putNumber("feeder motor front actual RPM", feederMotorFront.getEncoder().getVelocity());
     SmartDashboard.putNumber("feeder motor back actual RPM", feederMotorBack.getEncoder().getVelocity());

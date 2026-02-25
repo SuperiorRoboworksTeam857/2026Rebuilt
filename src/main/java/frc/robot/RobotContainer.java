@@ -7,11 +7,14 @@ package frc.robot;
 import frc.robot.commands.Autos;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Swerve;
 
 import static edu.wpi.first.units.Units.Rotation;
+
+import com.pathplanner.lib.auto.NamedCommands;
 
 // import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -38,6 +42,7 @@ public class RobotContainer {
   private final Shooter m_Shooter = new Shooter();
   private final Swerve m_Swerve = new Swerve();
   private final Spindexer m_spindexer = new Spindexer();
+  private final Intake m_intake = new Intake();
 
   private final Feeder m_feeder = new Feeder();
 
@@ -63,6 +68,12 @@ public class RobotContainer {
   private final POVButton forwardSpindexer = new POVButton(gamepad, Constants.ControllerConstants.forwardSpindexer);
   private final POVButton reverseFeeder = new POVButton(gamepad, Constants.ControllerConstants.reverseFeeder);
   private final POVButton forwardFeeder = new POVButton(gamepad, Constants.ControllerConstants.forwardFeeder);
+  private final JoystickButton intakeIn = new JoystickButton(gamepad, Constants.ControllerConstants.intakeInButton);
+  private final JoystickButton intakeOut = new JoystickButton(gamepad, Constants.ControllerConstants.intakeOutButton);
+  private final Trigger alignAndShoot = new Trigger(
+      () -> gamepad.getRawAxis(Constants.ControllerConstants.alignAndShoot) > 0.7);
+  private final Trigger intakeAndSpindex = new Trigger(
+      () -> gamepad.getRawAxis(Constants.ControllerConstants.intakeAndSpindex) > 0.7);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -77,27 +88,68 @@ public class RobotContainer {
             () -> robotCentric.getAsBoolean(),
             () -> slowSpeed.getAsBoolean(),
             () -> highSpeed.getAsBoolean()));
+
+    NamedCommands.registerCommand("startSpindexer",
+        new InstantCommand(
+            () -> m_spindexer.startSpindexer(), m_spindexer));
+    NamedCommands.registerCommand("startIntake",
+        new InstantCommand(
+            () -> m_intake.startIntake(), m_intake));
+    NamedCommands.registerCommand("startShooterForFiveSeconds",
+        new SequentialCommandGroup(
+            new RunCommand(
+                () -> m_Shooter.runShooterThenRest(m_feeder, m_spindexer), m_Shooter).withTimeout(5)));
+
+    NamedCommands.registerCommand("stopSpindexer",
+        new InstantCommand(
+            () -> m_spindexer.stopSpindexer(), m_spindexer));
+    NamedCommands.registerCommand("stopIntake",
+        new InstantCommand(
+            () -> m_intake.stopIntake(), m_intake));
+    NamedCommands.registerCommand("stopEverything",
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> m_spindexer.stopSpindexer(), m_spindexer),
+            new InstantCommand(
+                () -> m_intake.stopIntake(), m_intake),
+            new InstantCommand(
+                () -> m_feeder.stopFeeder(), m_feeder),
+            new InstantCommand(
+                () -> m_Shooter.stopShooter(), m_Shooter)));
+
     // Configure the trigger bindings
     configureBindings();
   }
 
   private void configureBindings() {
+    // alignAndShoot.whileTrue(
+    // new SequentialCommandGroup(
+    // new InstantCommand(
+    // () -> m_Shooter.startShooter(), m_Shooter),
+    // new WaitUntilCommand(m_Shooter::isShooterAtSpeed),
+    // new InstantCommand(
+    // () -> m_feeder.startFeeder(), m_feeder),
+    // new InstantCommand(
+    // () -> m_spindexer.startSpindexer(), m_spindexer))
+
+    // );
     shootShooter.whileTrue(
+        new RunCommand(
+            () -> m_Shooter.runShooterThenRest(m_feeder, m_spindexer), m_Shooter));
+    intakeAndSpindex.whileTrue(
         new SequentialCommandGroup(
             new InstantCommand(
-                () -> m_Shooter.startShooter(), m_Shooter),
-            new WaitUntilCommand(m_Shooter::isShooterAtSpeed),
+                () -> m_intake.startIntake(), m_intake),
             new InstantCommand(
-                () -> m_feeder.startFeeder(), m_feeder),
+                () -> m_spindexer.startSpindexer(), m_spindexer)));
+    intakeAndSpindex.onFalse(
+        new SequentialCommandGroup(
             new InstantCommand(
-                () -> m_spindexer.startSpindexer(), m_spindexer))
+                () -> m_intake.stopIntake(), m_intake),
+            new InstantCommand(
+                () -> m_spindexer.stopSpindexer(), m_spindexer)));
 
-    );
-    // shootShooter.whileTrue(
-    //   new RunCommand(
-    //     () -> m_Shooter.runShooterThenRest(20,m_feeder,m_spindexer),m_Shooter)
-    // );
-    shootShooter.onFalse(
+    alignAndShoot.onFalse(
         new SequentialCommandGroup(
             new InstantCommand(
                 () -> m_Shooter.stopShooter(), m_Shooter),
@@ -109,29 +161,26 @@ public class RobotContainer {
     );
 
     reverseSpindexer.whileTrue(
-      new InstantCommand(
-        () -> m_spindexer.reverseSpindexer(),m_spindexer
-      ).onlyIf(
-        () -> !forwardSpindexer.getAsBoolean()
-      )
-    );
+        new InstantCommand(
+            () -> m_spindexer.reverseSpindexer(), m_spindexer).onlyIf(
+                () -> !forwardSpindexer.getAsBoolean()));
     forwardSpindexer.whileTrue(
-      new InstantCommand(
-        () -> m_spindexer.startSpindexer(),m_spindexer
-      )
-    );    
+        new InstantCommand(
+            () -> m_spindexer.startSpindexer(), m_spindexer));
     reverseFeeder.whileTrue(
-      new InstantCommand(
-        () -> m_feeder.reverseFeeder(),m_feeder
-      ).onlyIf(
-        () -> !forwardFeeder.getAsBoolean()
-      )
-    );    
+        new InstantCommand(
+            () -> m_feeder.reverseFeeder(), m_feeder).onlyIf(
+                () -> !forwardFeeder.getAsBoolean()));
     forwardFeeder.whileTrue(
-      new InstantCommand(
-        () -> m_feeder.startFeeder(),m_feeder
-      )
-    );
+        new InstantCommand(
+            () -> m_feeder.startFeeder(), m_feeder));
+    intakeIn.whileTrue(
+        new InstantCommand(
+            () -> m_intake.startIntake(), m_intake));
+    intakeOut.whileTrue(
+        new InstantCommand(
+            () -> m_intake.reverseIntake(), m_intake).onlyIf(
+                () -> (!intakeIn.getAsBoolean() && !intakeAndSpindex.getAsBoolean())));
 
   }
 

@@ -118,12 +118,12 @@ public class Shooter extends SubsystemBase {
     double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
     targetShooterSpeed = shooterMotorPower;
     // now apply this to either the controller or basic speed
-    if(Constants.ShooterConstants.usePID) {
-      setShooterVelocity(shooterMotorPower);
-    }
-    else {
-      runShooter(shooterMotorPower);
-    }
+    // if(Constants.ShooterConstants.usePID) {
+    //   setShooterVelocity(shooterMotorPower);
+    // }
+    // else {
+    //   runShooter(shooterMotorPower);
+    // }
 
     double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0);
       setTurretPosition(turretMotorPosition);
@@ -133,11 +133,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
   }
   public boolean isShooterAtSpeed(){
-    int target = 4000;
+    double target = targetShooterSpeed;
     return target <= shooterMotor1.getEncoder().getVelocity();
   }
-  public void runShooterThenRest(double speed,Feeder feeder, Spindexer spindexer){
-    setShooterVelocity(speed);
+  public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
+    setShooterVelocity(targetShooterSpeed);
     if(isShooterAtSpeed()){
       feeder.startFeeder();
       spindexer.startSpindexer();
