@@ -8,7 +8,7 @@ import frc.robot.Constants;
 public final class CTREConfigs {
   public CANcoderConfiguration swerveCanCoderConfig;
 
-  public CTREConfigs() {
+  public CTREConfigs() { 
     swerveCanCoderConfig = new CANcoderConfiguration();
 
     swerveCanCoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
