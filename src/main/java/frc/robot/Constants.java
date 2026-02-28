@@ -198,7 +198,7 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int intakeMotorLeft = -1; // change later
+    public static final int intakeMotorLeft = -1;  // change later
     public static final int intakeMotorRight = -2;
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
 
