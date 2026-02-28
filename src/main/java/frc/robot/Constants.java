@@ -187,6 +187,7 @@ public final class Constants {
 
   public static final class ControllerConstants {
     public static final int shootShooterButton = XboxController.Button.kY.value;
+    public static final int manualShooterButton = XboxController.Button.kX.value;
     public static final int intakeInButton = XboxController.Button.kRightBumper.value;
     public static final int intakeOutButton = XboxController.Button.kLeftBumper.value;
     public static final int alignAndShoot = XboxController.Axis.kRightTrigger.value;

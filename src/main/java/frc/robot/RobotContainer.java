@@ -64,6 +64,8 @@ public class RobotContainer {
 
   private final JoystickButton shootShooter = new JoystickButton(gamepad,
       Constants.ControllerConstants.shootShooterButton);
+    private final JoystickButton manualShooter = new JoystickButton(gamepad,
+      Constants.ControllerConstants.manualShooterButton);
   private final POVButton reverseSpindexer = new POVButton(gamepad, Constants.ControllerConstants.reverseSpindexer);
   private final POVButton forwardSpindexer = new POVButton(gamepad, Constants.ControllerConstants.forwardSpindexer);
   private final POVButton reverseFeeder = new POVButton(gamepad, Constants.ControllerConstants.reverseFeeder);
@@ -158,6 +160,18 @@ public class RobotContainer {
             new InstantCommand(
                 () -> m_spindexer.stopSpindexer(), m_spindexer))
 
+    );
+
+    manualShooter.whileTrue(
+      new InstantCommand(
+        () -> m_Shooter.startShooter(), m_Shooter
+      )
+    );
+
+    manualShooter.onFalse(
+      new InstantCommand(
+        () -> m_Shooter.stopShooter(), m_Shooter
+      )
     );
 
     reverseSpindexer.whileTrue(
