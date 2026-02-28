@@ -138,6 +138,20 @@ public class RobotContainer {
     shootShooter.whileTrue(
         new RunCommand(
             () -> m_Shooter.runShooterThenRest(m_feeder, m_spindexer), m_Shooter));
+
+    shootShooter.onFalse(
+      new SequentialCommandGroup(
+        new InstantCommand(
+          () -> m_spindexer.stopSpindexer(), m_spindexer
+        ),
+        new InstantCommand(
+          () -> m_feeder.stopFeeder(), m_feeder
+        ),
+        new InstantCommand(
+          () -> m_Shooter.stopShooter(), m_Shooter
+        )
+      )
+    );
     intakeAndSpindex.whileTrue(
         new SequentialCommandGroup(
             new InstantCommand(
@@ -178,16 +192,33 @@ public class RobotContainer {
         new InstantCommand(
             () -> m_spindexer.reverseSpindexer(), m_spindexer).onlyIf(
                 () -> !forwardSpindexer.getAsBoolean()));
+
+    reverseSpindexer.onFalse(
+      new InstantCommand(
+        () -> m_spindexer.stopSpindexer(), m_spindexer
+      )
+    );
     forwardSpindexer.whileTrue(
         new InstantCommand(
             () -> m_spindexer.startSpindexer(), m_spindexer));
+    forwardSpindexer.onFalse(
+      new InstantCommand(
+        () -> m_spindexer.stopSpindexer(), m_spindexer
+      )
+    );
     reverseFeeder.whileTrue(
         new InstantCommand(
             () -> m_feeder.reverseFeeder(), m_feeder).onlyIf(
                 () -> !forwardFeeder.getAsBoolean()));
+    reverseFeeder.onFalse(
+        new InstantCommand(
+            () -> m_feeder.stopFeeder(), m_feeder));
     forwardFeeder.whileTrue(
         new InstantCommand(
             () -> m_feeder.startFeeder(), m_feeder));
+    forwardFeeder.onFalse(
+        new InstantCommand(
+            () -> m_feeder.stopFeeder(), m_feeder));
     intakeIn.whileTrue(
         new InstantCommand(
             () -> m_intake.startIntake(), m_intake));
