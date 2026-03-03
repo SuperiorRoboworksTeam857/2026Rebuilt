@@ -26,7 +26,6 @@ public class Spindexer extends SubsystemBase {
   private SparkClosedLoopController spindexerController = spindexerMotor.getClosedLoopController();
   private double targetSpindexerSpeed = 0;
 
-  /** Creates a new ExampleSubsystem. */
   public Spindexer() {
     SmartDashboard.putNumber("spindexerMotorSpeed", 0);
 
