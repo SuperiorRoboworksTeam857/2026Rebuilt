@@ -27,7 +27,7 @@ import frc.lib.config.SwerveModuleConstants;
  */
 public final class Constants {
   public static class Swerve {
-    public static final double fastDriveSpeedMultiplier = 1.1; // NEEDS TO BE CHANGED
+    public static final double fastDriveSpeedMultiplier = 1.0; // NEEDS TO BE CHANGED
     public static final double normalDriveSpeedMultiplier = 0.7; // NEEDS TO BE CHANGED
     public static final double slowDriveSpeedMultiplier = 0.25; // NEEDS TO BE CHANGED
 
@@ -40,7 +40,7 @@ public final class Constants {
     public static final double wheelDiameter = Units.inchesToMeters(4); // NEEDS TO BE CHANGED
     public static final double wheelCircumference = wheelDiameter * Math.PI;
     public static final double driveGearRatio = 6.03;//(54.0 / 14.0) * (32.0 / 25.0) * (30.0 / 15.0); // 6.75:1 // MIGHT NEED
-    public static final double angleGearRatio = (26); // MIGHT NEED TO BE CHANGED
+    public static final double angleGearRatio = 26; // MIGHT NEED TO BE CHANGED
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
         new Translation2d(wheelBase / 2.0, trackWidth / 2.0),
         new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
@@ -69,8 +69,8 @@ public final class Constants {
 
     /* Drive Motor Conversion Factors */
     public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
-    public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
-    public static final double angleConversionFactor = 360.0 / angleGearRatio;
+    public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0; // to convert to meters per second
+    public static final double angleConversionFactor = 360.0 / angleGearRatio; // to convert to degrees
     /* Swerve Profiling Values */
     public static final double maxSpeed = 4.5; // meters per second //4.5
     public static final double maxAngularVelocity = 6; // 11.5
