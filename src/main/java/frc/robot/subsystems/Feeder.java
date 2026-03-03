@@ -29,7 +29,6 @@ public class Feeder extends SubsystemBase {
   private SparkClosedLoopController feederControllerBack = feederMotorBack.getClosedLoopController();
   private double targetFeederSpeed = 0;
 
-  /** Creates a new ExampleSubsystem. */
   public Feeder() {
     SmartDashboard.putNumber("feederMotorSpeed", 0);
 
@@ -64,10 +63,11 @@ public class Feeder extends SubsystemBase {
   }
 
   public void powerFeeder(double speed) {
-    if(Constants.FeederConstants.usePID)
+    if(Constants.FeederConstants.usePID){
       setFeederVelocity(speed);
-    else
+    } else {
       runFeeder(speed);
+    }
   }
   public void startFeeder() {
     powerFeeder(targetFeederSpeed);
