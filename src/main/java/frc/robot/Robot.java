@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lib.config.CTREConfigs;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -15,7 +14,6 @@ import frc.lib.config.CTREConfigs;
  * this project, you must also update the Main.java file in the project.
  */
 public class Robot extends TimedRobot {
-   public static CTREConfigs ctreConfigs;
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
@@ -28,8 +26,6 @@ public class Robot extends TimedRobot {
   public Robot() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    ctreConfigs = new CTREConfigs();
-
     m_robotContainer = new RobotContainer();
   }
 
