@@ -4,28 +4,33 @@
 
 package frc.robot;
 
+import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.LimelightRead;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
+import swervelib.SwerveInputStream;
 
-import static edu.wpi.first.units.Units.Rotation;
+import java.io.File;
 
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Filesystem;
 // import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -40,22 +45,30 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  /* Subsystems */
-  private final Swerve m_swerve = new Swerve();
-  private final Intake m_intake = new Intake();
-  private final Spindexer m_spindexer = new Spindexer();
-  private final Feeder m_feeder = new Feeder();
-  private final Shooter m_shooter = new Shooter();
-
   /* Controllers */
   private final Joystick gamepad = new Joystick(0);
   private final Joystick driverStick = new Joystick(1);
   private final Joystick buttonBox = new Joystick(2);
 
-  /* Drive Controls */
-  private final int translationAxis = Joystick.AxisType.kY.value;
-  private final int strafeAxis = Joystick.AxisType.kX.value;
-  private final int rotationAxis = Joystick.AxisType.kZ.value;
+  /* Subsystems */
+  private final SwerveSubsystem m_swerve = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
+                                                                        "swerve/neoVortex"));
+  /**
+   * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
+   */
+  SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerve.getSwerveDrive(),
+                                                                () -> driverStick.getY() * -1,
+                                                                () -> driverStick.getX() * -1)
+                                                            .withControllerRotationAxis(driverStick::getZ)
+                                                            .deadband(OperatorConstants.DEADBAND)
+                                                            .scaleTranslation(0.8)
+                                                            .allianceRelativeControl(true);
+
+  private final Intake m_intake = new Intake();
+  private final Spindexer m_spindexer = new Spindexer();
+  private final Feeder m_feeder = new Feeder();
+  private final Shooter m_shooter = new Shooter();
+  private final Limelight s_Limelight = new Limelight();
 
   private final JoystickButton robotCentric = new JoystickButton(driverStick, 4);
   private final JoystickButton zeroGyro = new JoystickButton(driverStick, 3);
@@ -78,10 +91,26 @@ public class RobotContainer {
   private final Trigger intakeAndSpindex = new Trigger(
       () -> gamepad.getRawAxis(Constants.ControllerConstants.intakeAndSpindex) > 0.7);
 
+  public final AprilTagFieldLayout layout;
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+
+
+    // // Start camera streams for both webcams
+    // CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
+
+    s_Limelight.turnOnDriverCam();
+    s_Limelight.enableLimelight(false);
+    s_Limelight.setPipeline(Limelight.Pipeline.AprilTags);
+
+
+
+
     NamedCommands.registerCommand("startSpindexer",
         new InstantCommand(
             () -> m_spindexer.startSpindexer(), m_spindexer));
@@ -110,20 +139,24 @@ public class RobotContainer {
             new InstantCommand(
                 () -> m_shooter.stopShooter(), m_shooter)));
 
-    m_swerve.setDefaultCommand(
-        new TeleopSwerve(
-            m_swerve,
-            () -> -driverStick.getRawAxis(translationAxis),
-            () -> driverStick.getRawAxis(strafeAxis),
-            () -> driverStick.getRawAxis(rotationAxis),
-            () -> robotCentric.getAsBoolean(),
-            () -> slowSpeed.getAsBoolean(),
-            () -> highSpeed.getAsBoolean()));
+    Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
+    m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
+    // m_swerve.setDefaultCommand(
+    //     new TeleopSwerve(
+    //         m_swerve,
+    //         () -> -driverStick.getRawAxis(translationAxis),
+    //         () -> driverStick.getRawAxis(strafeAxis),
+    //         () -> driverStick.getRawAxis(rotationAxis),
+    //         () -> robotCentric.getAsBoolean(),
+    //         () -> slowSpeed.getAsBoolean(),
+    //         () -> highSpeed.getAsBoolean()));
 
     m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntake(), m_intake));
     m_spindexer.setDefaultCommand(new RunCommand(() -> m_spindexer.stopSpindexer(), m_spindexer));
     m_feeder.setDefaultCommand(new RunCommand(() -> m_feeder.stopFeeder(), m_feeder));
     m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.stopShooter(), m_shooter));
+
+    s_Limelight.setDefaultCommand(new LimelightRead(s_Limelight));
 
     // Configure the trigger bindings
     configureBindings();
@@ -212,6 +245,11 @@ public class RobotContainer {
             () -> m_intake.reverseIntake(), m_intake).onlyIf(
                 () -> (!intakeIn.getAsBoolean() && !intakeAndSpindex.getAsBoolean())));
 
+  }
+
+  public void setMotorBrake(boolean brake)
+  {
+    m_swerve.setMotorBrake(brake);
   }
 
   /**
