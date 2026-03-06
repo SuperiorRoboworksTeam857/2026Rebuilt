@@ -45,6 +45,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private final double FULL_SPEED = 1;
+  private final double NORMAL_SPEED = 0.7;
+  private final double SLOW_SPEED = 0.3;
+
   /* Controllers */
   private final Joystick gamepad = new Joystick(0);
   private final Joystick driverStick = new Joystick(1);
@@ -59,10 +64,13 @@ public class RobotContainer {
   SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerve.getSwerveDrive(),
                                                                 () -> driverStick.getY() * -1,
                                                                 () -> driverStick.getX() * -1)
-                                                            .withControllerRotationAxis(driverStick::getZ)
+                                                            .withControllerRotationAxis(() -> driverStick.getZ() * -1)
                                                             .deadband(OperatorConstants.DEADBAND)
-                                                            .scaleTranslation(0.8)
+                                                            .scaleTranslation(NORMAL_SPEED)
                                                             .allianceRelativeControl(true);
+  SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
+                                                             .allianceRelativeControl(false);
+
 
   private final Intake m_intake = new Intake();
   private final Spindexer m_spindexer = new Spindexer();
@@ -70,11 +78,14 @@ public class RobotContainer {
   private final Shooter m_shooter = new Shooter();
   private final Limelight s_Limelight = new Limelight();
 
-  private final JoystickButton robotCentric = new JoystickButton(driverStick, 4);
-  private final JoystickButton zeroGyro = new JoystickButton(driverStick, 3);
-
-  private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
+  
   private final JoystickButton highSpeed = new JoystickButton(driverStick, 1);
+  private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
+  private final JoystickButton zeroGyro = new JoystickButton(driverStick, 3);
+  private final JoystickButton robotCentric = new JoystickButton(driverStick, 4);
+  private final JoystickButton centerModules = new JoystickButton(driverStick, 5);
+  private final JoystickButton xLockWheels = new JoystickButton(driverStick, 6);
+  
 
   private final JoystickButton shootShooter = new JoystickButton(gamepad,
       Constants.ControllerConstants.shootShooterButton);
@@ -140,16 +151,8 @@ public class RobotContainer {
                 () -> m_shooter.stopShooter(), m_shooter)));
 
     Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
+    Command driveRobotOrientedAngularVelocity  = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add control to flip to robot centric
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
-    // m_swerve.setDefaultCommand(
-    //     new TeleopSwerve(
-    //         m_swerve,
-    //         () -> -driverStick.getRawAxis(translationAxis),
-    //         () -> driverStick.getRawAxis(strafeAxis),
-    //         () -> driverStick.getRawAxis(rotationAxis),
-    //         () -> robotCentric.getAsBoolean(),
-    //         () -> slowSpeed.getAsBoolean(),
-    //         () -> highSpeed.getAsBoolean()));
 
     m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntake(), m_intake));
     m_spindexer.setDefaultCommand(new RunCommand(() -> m_spindexer.stopSpindexer(), m_spindexer));
@@ -163,6 +166,11 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    // SWERVE CONTROLS
+    zeroGyro.onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
+    centerModules.whileTrue(m_swerve.centerModulesCommand());
+    xLockWheels.whileTrue(new RunCommand(() -> m_swerve.lock(), m_swerve));
+
     // alignAndShoot.whileTrue(
     // new SequentialCommandGroup(
     // new InstantCommand(
