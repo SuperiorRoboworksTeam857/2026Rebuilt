@@ -18,12 +18,11 @@ import swervelib.SwerveInputStream;
 import java.io.File;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Filesystem;
-// import frc.robot.subsystems.Swerve;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -266,6 +265,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    if (buttonBox.getRawButton(3)) {
+      return new PathPlannerAuto("test auto");
+    }
+
     // An example command will be run in autonomous
     return Autos.blankAuto();
   }
