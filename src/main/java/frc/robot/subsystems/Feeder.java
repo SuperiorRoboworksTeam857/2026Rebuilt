@@ -4,9 +4,7 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -14,7 +12,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -25,24 +22,9 @@ public class Feeder extends SubsystemBase {
   private SparkFlex feederMotorBack = new SparkFlex(Constants.FeederConstants.feederWheelBack, MotorType.kBrushless);
   private SparkFlexConfig feederConfigFront = new SparkFlexConfig(); // to handle the PID loop of the middle loop
   private SparkFlexConfig feederConfigBack = new SparkFlexConfig(); // to handle the PID loop of the middle loop
-  private SparkClosedLoopController feederControllerFront = feederMotorFront.getClosedLoopController();
-  private SparkClosedLoopController feederControllerBack = feederMotorBack.getClosedLoopController();
-  private double targetFeederSpeed = 0;
+  private double targetFeederSpeed = -0.4;
 
   public Feeder() {
-    SmartDashboard.putNumber("feederMotorSpeed", 0);
-
-    // setup PID parameters
-    feederConfigFront.closedLoop
-      .p(Constants.FeederConstants.feederKP)
-      .i(Constants.FeederConstants.feederKI)
-      .d(Constants.FeederConstants.feederKD);
-
-    feederConfigBack.closedLoop
-      .p(Constants.FeederConstants.feederKP)
-      .i(Constants.FeederConstants.feederKI)
-      .d(Constants.FeederConstants.feederKD);
-
     feederConfigBack.inverted(true);
 
     feederConfigFront.idleMode(IdleMode.kBrake);
@@ -52,45 +34,23 @@ public class Feeder extends SubsystemBase {
     feederMotorBack.configure(feederConfigBack, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
-  public void setFeederVelocity(double velocity){
-    feederControllerFront.setSetpoint(velocity, ControlType.kVelocity);
-    feederControllerBack.setSetpoint(velocity, ControlType.kVelocity);
-  }
-  
   public void runFeeder(double speed) {
     feederMotorFront.set(speed * Constants.FeederConstants.feederSpeedMultiplier);
     feederMotorBack.set(speed * Constants.FeederConstants.feederSpeedMultiplier);
   }
 
-  public void powerFeeder(double speed) {
-    if(Constants.FeederConstants.usePID){
-      setFeederVelocity(speed);
-    } else {
-      runFeeder(speed);
-    }
-  }
   public void startFeeder() {
-    powerFeeder(targetFeederSpeed);
+    runFeeder(targetFeederSpeed);
   }
   public void stopFeeder() {
-    powerFeeder(0);
+    runFeeder(0);
   }
   public void reverseFeeder() {
-    powerFeeder(-targetFeederSpeed);
+    runFeeder(-targetFeederSpeed);
   }
 
   @Override
   public void periodic() {
-    // grab from the dashboard the speed for the feeder and set it
-    // default 0 so it doesn't run when we don't want it to
-    double feederMotorPower = SmartDashboard.getNumber("feederMotorSpeed", 0f);
-    targetFeederSpeed = feederMotorPower;
-    // choose between PID control and just setting the power to the motor based on the constant
-    // if(Constants.FeederConstants.usePID)
-    //   setFeederVelocity(feederMotorPower);
-    // else
-    //   runFeeder(feederMotorPower);
-
     SmartDashboard.putNumber("feeder motor front actual RPM", feederMotorFront.getEncoder().getVelocity());
     SmartDashboard.putNumber("feeder motor back actual RPM", feederMotorBack.getEncoder().getVelocity());
   }
