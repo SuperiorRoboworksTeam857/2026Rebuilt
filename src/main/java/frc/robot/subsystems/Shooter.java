@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -33,7 +34,7 @@ public class Shooter extends SubsystemBase {
   // one for BOTH motors should be fine
   private SparkFlexConfig shooterMotorConfig1 = new SparkFlexConfig();
   private SparkFlexConfig shooterMotorConfig2 = new SparkFlexConfig();
-  private double targetShooterSpeed = 0.5;
+  private double targetShooterSpeed = 0;
   private SparkFlexConfig turretMotorConfig = new SparkFlexConfig();
   // then we have the actual closed loop controllers
   // these ensure that we are running at the expected setpoint (velocity, position, etc.)
@@ -46,10 +47,7 @@ public class Shooter extends SubsystemBase {
   // - the controller does some fancy math to determine what work needs to be done to get to our setpoint
   // - the controller instructs the motor to do so in a regular periodic
 
-  /** Creates a new ExampleSubsystem. */
   public Shooter() {
-    SmartDashboard.putNumber("shooterMotorSpeed", 0);
-
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
     // applying it to the configuration ALONE won't change the motor
@@ -57,7 +55,8 @@ public class Shooter extends SubsystemBase {
     shooterMotorConfig1.closedLoop
       .p(Constants.ShooterConstants.shooterKP)
       .i(Constants.ShooterConstants.shooterKI)
-      .d(Constants.ShooterConstants.shooterKD).feedForward.apply(new FeedForwardConfig());
+      .d(Constants.ShooterConstants.shooterKD)
+      .feedForward.kV(Constants.ShooterConstants.shooterKV);
     shooterMotorConfig2.apply(shooterMotorConfig1);
     // (hint: mess with these in the constants file)
     turretMotorConfig.closedLoop
@@ -99,10 +98,11 @@ public class Shooter extends SubsystemBase {
     shooterMotor2.set(speed * Constants.ShooterConstants.shooterSpeedMultiplier);
   }
   public void powerShooter(double speed) {
-    if(Constants.ShooterConstants.usePID)
+    if(Constants.ShooterConstants.usePID) {
       setShooterVelocity(speed);
-    else
+    } else {
       runShooter(speed);
+    }
   }
   public void startShooter() {
     powerShooter(targetShooterSpeed); //Change Later with something fancier
@@ -115,8 +115,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     // default system
-    double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
-    targetShooterSpeed = shooterMotorPower;
+    //double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
+    targetShooterSpeed = 1000;
     // now apply this to either the controller or basic speed
     // if(Constants.ShooterConstants.usePID) {
     //   setShooterVelocity(shooterMotorPower);
@@ -133,12 +133,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
   }
   public boolean isShooterAtSpeed(){
-    double target = targetShooterSpeed;
-    return target <= shooterMotor1.getEncoder().getVelocity();
+    return shooterMotor1.getEncoder().getVelocity() >= targetShooterSpeed;
   }
   public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
-    setShooterVelocity(targetShooterSpeed);
-    if(isShooterAtSpeed()){
+    runShooter(targetShooterSpeed);
+    if (isShooterAtSpeed()){
       feeder.startFeeder();
       spindexer.startSpindexer();
     }
