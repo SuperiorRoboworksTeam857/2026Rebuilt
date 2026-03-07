@@ -94,8 +94,8 @@ public class SwerveSubsystem extends SubsystemBase
     // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
     LimelightHelpers.setCameraPose_RobotSpace("limelight",
                                               Units.inchesToMeters(-9.826),
-                                              Units.inchesToMeters(-5.725),
-                                              Units.inchesToMeters(7.927), 0.0, 10.0, 180.0);
+                                              Units.inchesToMeters(5.725),
+                                              Units.inchesToMeters(7.927), 180.0, 10.0, 180.0);
 
     // Set AprilTag offset tracking point (meters)
     LimelightHelpers.setFiducial3DOffset("limelight", 0.0, 0.0, 0);
