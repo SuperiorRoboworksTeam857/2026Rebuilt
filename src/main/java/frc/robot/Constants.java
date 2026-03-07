@@ -65,9 +65,10 @@ public final class Constants {
 
     // PID constants for the spindexer wheel
     // TODO: mess with these values to get something right
-    public static final double shooterKP = 0.1;
+    public static final double shooterKP = 0;
     public static final double shooterKI = 0;
     public static final double shooterKD = 0;
+    public static final double shooterKV = 0;
 
     // Turret constants for the turret
     public static final double turretKP = 0.1;
@@ -75,7 +76,7 @@ public final class Constants {
     public static final double turretKD = 0;
 
     // boolean to see if we should use the PID loop (for testing)
-    public static final boolean usePID = false;
+    public static final boolean usePID = true;
   }
 
   // constants for the Spindexer
@@ -83,15 +84,6 @@ public final class Constants {
   public static final class SpindexerConstants {
     public static final int spindexerWheel = 24; // will spin in the center
     public static final double spindexerSpeedMultiplier = 1; // basic speed multiplier
-
-    // PID constants for the spindexer wheel
-    // TODO: mess with these values to get something right
-    public static final double spindexerKP = 0.1;
-    public static final double spindexerKI = 0;
-    public static final double spindexerKD = 0;
-
-    // boolean to see if we should use the PID loop (for testing)
-    public static final boolean usePID = false;
   }
 
   // constants for the Feeder
@@ -100,15 +92,6 @@ public final class Constants {
     public static final int feederWheelFront = 25;
     public static final int feederWheelBack = 26;
     public static final double feederSpeedMultiplier = 1; // basic speed multiplier
-
-    // PID constants for the feeder wheel
-    // TODO: mess with these values to get something right
-    public static final double feederKP = 0.1;
-    public static final double feederKI = 0;
-    public static final double feederKD = 0;
-
-    // boolean to see if we should use the PID loop (for testing)
-    public static final boolean usePID = false;
   }
 
   public static final class ControllerConstants {
@@ -128,15 +111,6 @@ public final class Constants {
     public static final int intakeMotorLeft = 28;  // change later
     public static final int intakeMotorRight = -2;
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
-
-    // PID constants for the feeder wheel
-    // TODO: mess with these values to get something right
-    public static final double intakeKP = 0.1;
-    public static final double intakeKI = 0;
-    public static final double intakeKD = 0;
-
-    // boolean to see if we should use the PID loop (for testing)
-    public static final boolean usePID = false;
   }
 
 }
