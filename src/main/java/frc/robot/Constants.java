@@ -71,9 +71,14 @@ public final class Constants {
     public static final double shooterKV = 0;
 
     // Turret constants for the turret
-    public static final double turretKP = 0.1;
+    public static final double turretKP = 2.5;
     public static final double turretKI = 0;
     public static final double turretKD = 0;
+
+    // Convert turret motor angle to be the actual turret angle in rotations
+    public static final double turretPositionFactor = (20.0 / 200.0) * (1.0 / 5.0); // 1/50
+    public static final double turretMinLimit = -0.45; // -0.45
+    public static final double turretMaxLimit = 0.4; // 0.4
 
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = true;

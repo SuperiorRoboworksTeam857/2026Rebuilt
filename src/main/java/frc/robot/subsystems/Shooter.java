@@ -4,19 +4,16 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.FeedForwardConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -63,7 +60,9 @@ public class Shooter extends SubsystemBase {
       .p(Constants.ShooterConstants.turretKP)
       .i(Constants.ShooterConstants.turretKI)
       .d(Constants.ShooterConstants.turretKD);
-
+    turretMotorConfig.encoder
+      .positionConversionFactor(Constants.ShooterConstants.turretPositionFactor);
+    
     shooterMotorConfig2.inverted(true);
 
     shooterMotorConfig1.idleMode(IdleMode.kCoast);
@@ -77,8 +76,16 @@ public class Shooter extends SubsystemBase {
     // these last two parameters basically say:
     // 1: reset the configuration safely (if it fails, then don't do something CRAZY)
     // 2: persist even if the robot power goes off (do we want these changes to be temporary)
+
+    turretMotor.getEncoder().setPosition(0);
+
+    SmartDashboard.putNumber("turretMotorPosition",0.0);
+
   }
   public void setTurretPosition(double position) {
+    position = clamp(position,
+                     Constants.ShooterConstants.turretMinLimit,
+                     Constants.ShooterConstants.turretMaxLimit);
     turretMotorController.setSetpoint(position, ControlType.kPosition);
   }
 
@@ -125,8 +132,10 @@ public class Shooter extends SubsystemBase {
     //   runShooter(shooterMotorPower);
     // }
 
-    double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0);
-      setTurretPosition(turretMotorPosition);
+    double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0.0);
+    setTurretPosition(turretMotorPosition);
+
+    SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
 
     // put both of these numbers on the smartdashboard
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());
@@ -146,5 +155,10 @@ public class Shooter extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+
+  public static double clamp(double val, double min, double max) {
+    return Math.max(min, Math.min(max, val));
   }
 }
