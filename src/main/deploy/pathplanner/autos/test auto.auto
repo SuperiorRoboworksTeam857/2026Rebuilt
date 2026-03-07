@@ -5,9 +5,21 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "startIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "left trench to neutral"
+            "pathName": "test path"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopIntake"
           }
         }
       ]
