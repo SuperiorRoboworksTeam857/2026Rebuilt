@@ -67,6 +67,9 @@ public class RobotContainer {
                                                             .deadband(OperatorConstants.DEADBAND)
                                                             .scaleTranslation(NORMAL_SPEED)
                                                             .allianceRelativeControl(true);
+  SwerveInputStream driveAngularVelocitySlow = driveAngularVelocity.copy().scaleTranslation(SLOW_SPEED).scaleRotation(SLOW_SPEED);
+  SwerveInputStream driveAngularVelocityFast = driveAngularVelocity.copy().scaleTranslation(FULL_SPEED).scaleRotation(FULL_SPEED);
+
   SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
                                                              .allianceRelativeControl(false);
 
@@ -109,7 +112,6 @@ public class RobotContainer {
   public RobotContainer() {
     layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-
     // // Start camera streams for both webcams
     // CameraServer.startAutomaticCapture();
     // CameraServer.startAutomaticCapture();
@@ -117,8 +119,6 @@ public class RobotContainer {
     s_Limelight.turnOnDriverCam();
     s_Limelight.enableLimelight(false);
     s_Limelight.setPipeline(Limelight.Pipeline.AprilTags);
-
-
 
 
     NamedCommands.registerCommand("startSpindexer",
@@ -166,7 +166,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // SWERVE CONTROLS
-    zeroGyro.onTrue(new InstantCommand(() -> m_swerve.zeroGyro()));
+    zeroGyro.onTrue(new InstantCommand(() -> m_swerve.zeroGyroWithAlliance()));
     centerModules.whileTrue(m_swerve.centerModulesCommand());
     xLockWheels.whileTrue(new RunCommand(() -> m_swerve.lock(), m_swerve));
 
@@ -181,46 +181,35 @@ public class RobotContainer {
     // () -> m_spindexer.startSpindexer(), m_spindexer))
 
     // );
-    // shootShooter.whileTrue(
-    //     new RunCommand(
-    //         () -> m_Shooter.runShooterThenRest(m_feeder, m_spindexer), m_Shooter));
+    shootShooter.whileTrue( new RunCommand( () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
 
-    shootShooter.onFalse(
-      new SequentialCommandGroup(
-        new InstantCommand(
-          () -> m_spindexer.stopSpindexer(), m_spindexer
-        ),
-        new InstantCommand(
-          () -> m_feeder.stopFeeder(), m_feeder
-        ),
-        new InstantCommand(
-          () -> m_shooter.stopShooter(), m_shooter
-        )
-      )
-    );
-
-    shootShooter.whileTrue(
-        new SequentialCommandGroup(
-            new InstantCommand(
-                () -> m_shooter.startShooter(), m_shooter
-            ),
-            new WaitCommand(.7),
-            new InstantCommand(
-                () -> m_feeder.startFeeder(), m_feeder
-            ),
-            new InstantCommand(
-                () -> m_spindexer.startSpindexer(), m_spindexer
-            )
-        )
-    );
+    // shootShooter.onTrue(
+    //     new SequentialCommandGroup(
+    //         new ParallelRaceGroup(
+    //             new RunCommand(
+    //                 () -> m_shooter.startShooter(), m_shooter
+    //             ),
+    //             new WaitCommand(.7)
+    //         ),
+    //         new ParallelRaceGroup(
+    //             new RunCommand(
+    //                 () -> m_shooter.startShooter(), m_shooter
+    //             ),
+    //             new RunCommand(
+    //                 () -> m_feeder.startFeeder(), m_feeder
+    //             ),
+    //             new RunCommand(
+    //                 () -> m_spindexer.startSpindexer(), m_spindexer
+    //             )
+    //         )
+    //     )
+    // );
     intakeAndSpindex.whileTrue(
         new ParallelRaceGroup(
             new RunCommand(
                 () -> m_intake.startIntake(), m_intake),
             new RunCommand(
                 () -> m_spindexer.startSpindexer(), m_spindexer)));
-
-
 
     manualShooter.whileTrue(
       new RunCommand(
@@ -267,6 +256,8 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     if (buttonBox.getRawButton(3)) {
       return new PathPlannerAuto("test auto");
+    } else if (buttonBox.getRawButton(4)) {
+      return new PathPlannerAuto("Left Trench Auto");
     }
 
     // An example command will be run in autonomous
