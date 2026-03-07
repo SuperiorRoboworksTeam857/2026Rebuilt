@@ -12,16 +12,6 @@ public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
   public Limelight() {}
 
-  private boolean isReefAprilTagValid = false;
-
-  public boolean getIsReefAprilTagValid(){
-    return isReefAprilTagValid;
-  }
-
-  public void setIsReefAprilTagValid(boolean isValid){
-    isReefAprilTagValid = isValid;
-  }
-
   @Override
   public void periodic() {
     int tag = aprilTagID();
