@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -89,6 +90,16 @@ public class SwerveSubsystem extends SubsystemBase
     // swerveDrive.pushOffsetsToEncoders(); // Set the absolute encoder to be used over the internal encoder and push the offsets onto it. Throws warning if not possible
 
     setupPathPlanner();
+
+    // Change the camera pose relative to robot center (x forward, y left, z up, degrees)
+    LimelightHelpers.setCameraPose_RobotSpace("limelight",
+                                              Units.inchesToMeters(-9.826),
+                                              Units.inchesToMeters(-5.725),
+                                              Units.inchesToMeters(7.927), 0.0, 10.0, 180.0);
+
+    // Set AprilTag offset tracking point (meters)
+    LimelightHelpers.setFiducial3DOffset("limelight", 0.0, 0.0, 0);
+
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
