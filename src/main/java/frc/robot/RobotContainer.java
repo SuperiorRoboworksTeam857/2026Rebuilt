@@ -77,7 +77,7 @@ public class RobotContainer {
   private final Intake m_intake = new Intake();
   private final Spindexer m_spindexer = new Spindexer();
   private final Feeder m_feeder = new Feeder();
-  private final Shooter m_shooter = new Shooter();
+  private final Shooter m_shooter = new Shooter(m_swerve);
   private final Limelight s_Limelight = new Limelight();
 
   
