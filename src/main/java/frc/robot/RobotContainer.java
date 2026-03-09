@@ -156,7 +156,7 @@ public class RobotContainer {
     Command driveRobotOrientedAngularVelocity  = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add control to flip to robot centric
     m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-    m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntake(), m_intake));
+    m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntakeAndExtension(), m_intake));
     m_spindexer.setDefaultCommand(new RunCommand(() -> m_spindexer.stopSpindexer(), m_spindexer));
     m_feeder.setDefaultCommand(new RunCommand(() -> m_feeder.stopFeeder(), m_feeder));
     m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.stopShooter(), m_shooter));

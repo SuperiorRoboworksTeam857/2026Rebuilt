@@ -40,8 +40,8 @@ public class Intake extends SubsystemBase {
     // define the configuration for the positionFactor and velocityFactor for the
     // intake extension motor
     // from 2025 Elevator code
-    double sprocketDiameter = 22 * 0.25 / Math.PI; // 22 teeth at 0.25 inch pitch
-    double gearRatio = 20; // 20:1
+    double sprocketDiameter = 2; // 22 teeth at 0.25 inch pitch
+    double gearRatio = 5; // 20:1
     double driveConversionPositionFactor = (sprocketDiameter * Math.PI) / gearRatio;
     double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
 
@@ -64,6 +64,12 @@ public class Intake extends SubsystemBase {
   public void stopIntake() {
     runIntake(0);
   }
+
+  public void stopIntakeAndExtension() {
+    runIntake(0);
+    intakeExtensionMotor.set(0);
+  }
+
 
   public void reverseIntake() {
     runIntake(-0.5);
