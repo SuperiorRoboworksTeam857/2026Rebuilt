@@ -17,6 +17,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -40,6 +41,10 @@ public class Intake extends SubsystemBase {
     // define the configuration for the positionFactor and velocityFactor for the
     // intake extension motor
     // from 2025 Elevator code
+
+    // SmartDashboard.putNumber("intakeExtensionInches",0.0);
+
+
     double sprocketDiameter = 2; // 22 teeth at 0.25 inch pitch
     double gearRatio = 5; // 20:1
     double driveConversionPositionFactor = (sprocketDiameter * Math.PI) / gearRatio;
@@ -65,14 +70,13 @@ public class Intake extends SubsystemBase {
     runIntake(0);
   }
 
+  public void reverseIntake() {
+    runIntake(-0.5);
+  }
+
   public void stopIntakeAndExtension() {
     runIntake(0);
     intakeExtensionMotor.set(0);
-  }
-
-
-  public void reverseIntake() {
-    runIntake(-0.5);
   }
 
   public void stopIntakeExtension() {
@@ -99,4 +103,21 @@ public class Intake extends SubsystemBase {
     // within half an inch
     return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - targetPosition) < .5;
   }
+
+  // // in case we want to manually se these things
+  // // comment out the default command at the beginning
+  // @Override
+  // public void periodic(){
+  //   double intakePosition = SmartDashboard.getNumber("intakeExtensionInches",0.0);
+
+  //   intakeExtensionController.setGoal(intakePosition);
+  //   // if it's 0, then don't set any power...
+  //   if(intakePosition == 0){
+  //     intakeExtensionMotor.set(0);
+  //   }else{
+  //     intakeExtensionMotor.set(intakeExtensionController.calculate(intakeExtensionMotor.getEncoder().getPosition()));
+  //   }
+
+  //   SmartDashboard.getNumber("intakeExtensionActual", intakeExtensionMotor.getEncoder().getPosition());
+  // }
 }
