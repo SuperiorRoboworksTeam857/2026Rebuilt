@@ -13,9 +13,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 
 public class Shooter extends SubsystemBase {
   // 2.9.26
@@ -44,7 +49,12 @@ public class Shooter extends SubsystemBase {
   // - the controller does some fancy math to determine what work needs to be done to get to our setpoint
   // - the controller instructs the motor to do so in a regular periodic
 
-  public Shooter() {
+
+  private final SwerveSubsystem s_swerve;
+
+  public Shooter(SwerveSubsystem swerve) {
+    this.s_swerve = swerve;
+
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
     // applying it to the configuration ALONE won't change the motor
@@ -160,5 +170,61 @@ public class Shooter extends SubsystemBase {
 
   public static double clamp(double val, double min, double max) {
     return Math.max(min, Math.min(max, val));
+  }
+
+
+  public Pose2d whereToShootAt(){
+    Pose2d robotPose = s_swerve.getPose();
+
+    Pose2d pose = Constants.ShooterConstants.blueDownCorner;
+
+    if (robotIsInAllianceZone(robotPose)) {
+      if (isBlueAlliance()) {
+        pose = Constants.ShooterConstants.blueHubLocation;
+      } else { // red alliance
+        pose = Constants.ShooterConstants.redHubLocation;
+      }
+    } else { // not in alliance zone
+      double y_meters = robotPose.getY();
+      double y_inches = Units.metersToInches(y_meters);
+
+      if (isBlueAlliance()) {
+        if (y_inches < 158) {
+          pose = Constants.ShooterConstants.blueDownCorner;
+        } else {
+          pose = Constants.ShooterConstants.blueUpCorner;
+        }
+      } else { // red alliance
+        if (y_inches < 158) {
+          pose = Constants.ShooterConstants.redDownCorner;
+        } else {
+          pose = Constants.ShooterConstants.redUpCorner;
+        }
+      }
+    }
+
+    return pose;
+  }
+
+  public boolean robotIsInAllianceZone(Pose2d robotPose){
+    double x_meters = robotPose.getX();
+    double x_inches = Units.metersToInches(x_meters);
+
+    boolean inAllianceZone = false;
+    if (isBlueAlliance()) {
+      if (x_inches < 150) {
+        inAllianceZone = true;
+      }
+    } else {
+      if (x_inches > 500) {
+        inAllianceZone = true;
+      }
+    }
+
+    return inAllianceZone;
+  }
+
+  public boolean isBlueAlliance() {
+    return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
   }
 }

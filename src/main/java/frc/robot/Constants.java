@@ -5,12 +5,9 @@
 package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import swervelib.math.Matter;
@@ -82,6 +79,28 @@ public final class Constants {
 
     // boolean to see if we should use the PID loop (for testing)
     public static final boolean usePID = true;
+
+
+    public static final Pose2d redHubLocation =  new Pose2d(Units.inchesToMeters(469.11),
+                                                            Units.inchesToMeters(250.145),
+                                                            Rotation2d.kZero);
+    public static final Pose2d blueHubLocation = new Pose2d(Units.inchesToMeters(182.11),
+                                                            Units.inchesToMeters(250.145),
+                                                            Rotation2d.kZero);
+
+    public static final Pose2d blueDownCorner =  new Pose2d(Units.inchesToMeters(12),    // wall at 0
+                                                            Units.inchesToMeters(25.37), // wall at 0
+                                                            Rotation2d.kZero);
+    public static final Pose2d blueUpCorner =    new Pose2d(Units.inchesToMeters(12),    // wall at 0
+                                                            Units.inchesToMeters(292.31),// wall at 318
+                                                            Rotation2d.kZero);
+
+    public static final Pose2d redDownCorner =  new Pose2d(Units.inchesToMeters(638),    // wall at 650
+                                                           Units.inchesToMeters(25.37),  // wall at 0
+                                                           Rotation2d.kZero);
+    public static final Pose2d redUpCorner =    new Pose2d(Units.inchesToMeters(638),    // wall at 650
+                                                           Units.inchesToMeters(292.31), // wall at 318
+                                                           Rotation2d.kZero);
   }
 
   // constants for the Spindexer
