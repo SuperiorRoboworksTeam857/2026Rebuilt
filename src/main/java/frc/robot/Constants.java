@@ -28,6 +28,8 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static final double deltaTime = 0;
+
   public static class Swerve {
     public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
@@ -106,6 +108,8 @@ public final class Constants {
     public static final int intakeOutButton = XboxController.Button.kLeftBumper.value;
     public static final int alignAndShoot = XboxController.Axis.kRightTrigger.value;
     public static final int intakeAndSpindex = XboxController.Axis.kLeftTrigger.value;
+    public static final int intakeExtendButton = XboxController.Button.kA.value;
+    public static final int intakeContractButton = XboxController.Button.kB.value;
     public static final int reverseSpindexer = 270;
     public static final int forwardSpindexer = 90;
     public static final int reverseFeeder = 180;
@@ -113,9 +117,22 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int intakeMotorLeft = 28;  // change later
-    public static final int intakeMotorRight = -2;
+    public static final int intakePowerMotor = 27;  // change later
+    public static final int intakeExtensionMotor = -1;  // change later
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
+
+    public static final double intakeExtendedPosition = 1; // change later
+    public static final double intakeContractedPosition = 0; // change later
+
+    // PID constants for the extension
+    public static final double intakeKP = 0.1;
+    public static final double intakeKI = 0;
+    public static final double intakeKD = 0;
+
+
+
+    // boolean to see if we should use the PID loop (for testing)
+    public static final boolean usePID = false;
   }
 
 }

@@ -99,6 +99,9 @@ public class RobotContainer {
   private final POVButton forwardFeeder = new POVButton(gamepad, Constants.ControllerConstants.forwardFeeder);
   private final JoystickButton intakeIn = new JoystickButton(gamepad, Constants.ControllerConstants.intakeInButton);
   private final JoystickButton intakeOut = new JoystickButton(gamepad, Constants.ControllerConstants.intakeOutButton);
+  private final JoystickButton intakeExtend = new JoystickButton(gamepad, Constants.ControllerConstants.intakeExtendButton);
+  private final JoystickButton intakeContract = new JoystickButton(gamepad, Constants.ControllerConstants.intakeContractButton);
+
   private final Trigger alignAndShoot = new Trigger(
       () -> gamepad.getRawAxis(Constants.ControllerConstants.alignAndShoot) > 0.7);
   private final Trigger intakeAndSpindex = new Trigger(
@@ -240,6 +243,30 @@ public class RobotContainer {
         new RunCommand(
             () -> m_intake.reverseIntake(), m_intake).onlyIf(
                 () -> (!intakeIn.getAsBoolean() && !intakeAndSpindex.getAsBoolean())));
+
+    intakeExtend.whileTrue(
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> m_intake.setIntakeExtension(true), m_intake
+            ),
+            new RunCommand(
+                () -> m_intake.enforceIntakeExtension(), m_intake
+            )
+        )
+    );
+
+    intakeContract.whileTrue(
+        new SequentialCommandGroup(
+            new InstantCommand(
+                () -> m_intake.setIntakeExtension(true), m_intake
+            ),
+            new RunCommand(
+                () -> m_intake.enforceIntakeExtension(), m_intake
+            )
+        ).onlyIf(
+            () -> !intakeExtend.getAsBoolean()
+        )
+    );
 
   }
 
