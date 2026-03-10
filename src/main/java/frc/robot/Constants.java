@@ -25,7 +25,7 @@ import swervelib.math.Matter;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static final double deltaTime = 0;
+  public static final double deltaTime = 0.02;
 
   public static class Swerve {
     public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
@@ -84,10 +84,10 @@ public final class Constants {
 
 
     public static final Pose2d redHubLocation =  new Pose2d(Units.inchesToMeters(469.11),
-                                                            Units.inchesToMeters(250.145),
+                                                            Units.inchesToMeters(158.845),
                                                             Rotation2d.kZero);
     public static final Pose2d blueHubLocation = new Pose2d(Units.inchesToMeters(182.11),
-                                                            Units.inchesToMeters(250.145),
+                                                            Units.inchesToMeters(158.845),
                                                             Rotation2d.kZero);
 
     public static final Pose2d blueDownCorner =  new Pose2d(Units.inchesToMeters(12),    // wall at 0
@@ -137,7 +137,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final int intakePowerMotor = 27;  // change later
-    public static final int intakeExtensionMotor = -1;  // change later
+    public static final int intakeExtensionMotor = 27;  // change later
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
 
     public static final double intakeExtendedPosition = 1; // change later
