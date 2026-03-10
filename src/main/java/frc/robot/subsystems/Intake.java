@@ -104,7 +104,7 @@ public class Intake extends SubsystemBase {
     return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - targetPosition) < .5;
   }
 
-  // // in case we want to manually se these things
+  // // in case we want to manually see these things
   // // comment out the default command at the beginning
   // @Override
   // public void periodic(){
