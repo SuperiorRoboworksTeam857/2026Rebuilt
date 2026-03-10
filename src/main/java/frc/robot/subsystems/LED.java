@@ -46,7 +46,7 @@ public class LED extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double lightPattern;
+    double lightPattern = 0.01;
 
     // SmartDashboard.putBoolean("LED - isReefAprilTagValid", s_Limelight.getIsReefAprilTagValid());
 
