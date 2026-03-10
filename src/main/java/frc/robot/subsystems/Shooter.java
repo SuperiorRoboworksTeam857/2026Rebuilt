@@ -14,6 +14,8 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -142,8 +144,20 @@ public class Shooter extends SubsystemBase {
     //   runShooter(shooterMotorPower);
     // }
 
-    double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0.0);
-    setTurretPosition(turretMotorPosition);
+    //double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0.0);
+
+    Pose2d robotPose = s_swerve.getPose();
+    Pose2d shooterTargetPose = whereToShootAt(robotPose);
+    Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());
+    Rotation2d shootRotationInFieldCoords = shootDirection.getAngle();
+    Rotation2d robotRotationInFieldCoords = robotPose.getRotation();
+    Rotation2d shootRotationInRobotCoords = shootRotationInFieldCoords
+                                            .minus(robotRotationInFieldCoords)
+                                            .unaryMinus().plus(Rotation2d.k180deg); // shooter is "backwards" on robot, and opposite rotation dir
+
+    s_swerve.field.getObject("target").setPose(shooterTargetPose);
+
+    setTurretPosition(shootRotationInRobotCoords.getRotations());
 
     SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
 
@@ -173,9 +187,7 @@ public class Shooter extends SubsystemBase {
   }
 
 
-  public Pose2d whereToShootAt(){
-    Pose2d robotPose = s_swerve.getPose();
-
+  public Pose2d whereToShootAt(Pose2d robotPose){
     Pose2d pose = Constants.ShooterConstants.blueDownCorner;
 
     if (robotIsInAllianceZone(robotPose)) {
