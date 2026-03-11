@@ -44,10 +44,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-
     private final double FULL_SPEED = 1;
     private final double NORMAL_SPEED = 0.7;
     private final double SLOW_SPEED = 0.3;
+
+    private double driveSpeedScaling = NORMAL_SPEED;
+
 
     /* Controllers */
     private final Joystick gamepad = new Joystick(0);
@@ -62,16 +64,12 @@ public class RobotContainer {
      * by angular velocity.
      */
     SwerveInputStream driveAngularVelocity = SwerveInputStream.of(m_swerve.getSwerveDrive(),
-            () -> driverStick.getY() * -1,
-            () -> driverStick.getX() * -1)
-            .withControllerRotationAxis(() -> driverStick.getZ() * -1)
+            () -> driverStick.getY() * -1 * driveSpeedScaling,
+            () -> driverStick.getX() * -1 * driveSpeedScaling)
+            .withControllerRotationAxis(() -> driverStick.getZ() * -1 * driveSpeedScaling)
             .deadband(OperatorConstants.DEADBAND)
-            .scaleTranslation(NORMAL_SPEED)
+            //.scaleTranslation(NORMAL_SPEED)
             .allianceRelativeControl(true);
-    SwerveInputStream driveAngularVelocitySlow = driveAngularVelocity.copy().scaleTranslation(SLOW_SPEED)
-            .scaleRotation(SLOW_SPEED);
-    SwerveInputStream driveAngularVelocityFast = driveAngularVelocity.copy().scaleTranslation(FULL_SPEED)
-            .scaleRotation(FULL_SPEED);
 
     SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
             .allianceRelativeControl(false);
@@ -176,6 +174,11 @@ public class RobotContainer {
         centerModules.whileTrue(m_swerve.centerModulesCommand());
         xLockWheels.whileTrue(new RunCommand(() -> m_swerve.lock(), m_swerve));
 
+        slowSpeed.whileTrue(new InstantCommand(() -> driveSpeedScaling = SLOW_SPEED))
+                 .onFalse(new InstantCommand(() -> driveSpeedScaling = NORMAL_SPEED));
+        highSpeed.whileTrue(new InstantCommand(() -> driveSpeedScaling = FULL_SPEED))
+                 .onFalse(new InstantCommand(() -> driveSpeedScaling = NORMAL_SPEED));
+
         // alignAndShoot.whileTrue(
         // new SequentialCommandGroup(
         // new InstantCommand(
@@ -272,11 +275,9 @@ public class RobotContainer {
         intakeContract.whileTrue(
                 new SequentialCommandGroup(
                         new InstantCommand(
-                                () -> m_intake.setIntakeExtension(true), m_intake),
+                                () -> m_intake.setIntakeExtension(false), m_intake),
                         new RunCommand(
-                                () -> m_intake.enforceIntakeExtension(), m_intake))
-                        .onlyIf(
-                                () -> !intakeExtend.getAsBoolean()));
+                                () -> m_intake.enforceIntakeExtension(), m_intake)));
 
     }
 
