@@ -51,6 +51,7 @@ public class Shooter extends SubsystemBase {
   // - the controller does some fancy math to determine what work needs to be done to get to our setpoint
   // - the controller instructs the motor to do so in a regular periodic
 
+  Rotation2d shootRotationInRobotCoords;
 
   private final SwerveSubsystem s_swerve;
 
@@ -89,7 +90,7 @@ public class Shooter extends SubsystemBase {
     // 1: reset the configuration safely (if it fails, then don't do something CRAZY)
     // 2: persist even if the robot power goes off (do we want these changes to be temporary)
 
-    turretMotor.getEncoder().setPosition(0);
+    //turretMotor.getEncoder().setPosition(0);
 
     SmartDashboard.putNumber("turretMotorPosition",0.0);
 
@@ -99,6 +100,7 @@ public class Shooter extends SubsystemBase {
                      Constants.ShooterConstants.turretMinLimit,
                      Constants.ShooterConstants.turretMaxLimit);
     turretMotorController.setSetpoint(position, ControlType.kPosition);
+    
   }
 
   public void setShooterVelocity(double velocity){
@@ -135,7 +137,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run
     // default system
     //double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
-    targetShooterSpeed = 1000;
+    targetShooterSpeed = 0.3;
     // now apply this to either the controller or basic speed
     // if(Constants.ShooterConstants.usePID) {
     //   setShooterVelocity(shooterMotorPower);
@@ -151,9 +153,9 @@ public class Shooter extends SubsystemBase {
     Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());
     Rotation2d shootRotationInFieldCoords = shootDirection.getAngle();
     Rotation2d robotRotationInFieldCoords = robotPose.getRotation();
-    Rotation2d shootRotationInRobotCoords = shootRotationInFieldCoords
-                                            .minus(robotRotationInFieldCoords)
-                                            .unaryMinus().plus(Rotation2d.k180deg); // shooter is "backwards" on robot, and opposite rotation dir
+    shootRotationInRobotCoords = shootRotationInFieldCoords
+                                 .minus(robotRotationInFieldCoords)
+                                 .unaryMinus().plus(Rotation2d.k180deg); // shooter is "backwards" on robot, and opposite rotation dir
 
     s_swerve.field.getObject("target").setPose(shooterTargetPose);
 
@@ -164,9 +166,18 @@ public class Shooter extends SubsystemBase {
     // put both of these numbers on the smartdashboard
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
+
+
+    SmartDashboard.putBoolean("Shooter On Target", isShooterOnTarget());
+    SmartDashboard.putBoolean("Shooter Is At Speed", isShooterAtSpeed());
+
   }
   public boolean isShooterAtSpeed(){
     return shooterMotor1.getEncoder().getVelocity() >= targetShooterSpeed;
+  }
+  public boolean isShooterOnTarget(){
+    return Math.abs(turretMotor.getEncoder().getPosition() -
+                    shootRotationInRobotCoords.getRotations()) < 0.01;
   }
   public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
     runShooter(targetShooterSpeed);
