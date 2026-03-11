@@ -31,7 +31,7 @@ public final class Constants {
     public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
     public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED  = Units.feetToMeters(4);
+    public static final double MAX_SPEED  = Units.feetToMeters(10);
   }
 
  public static final class AutonConstants {
@@ -136,22 +136,17 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int intakePowerMotor = 27;  // change later
-    public static final int intakeExtensionMotor = 27;  // change later
+    public static final int intakePowerMotor = 28;
+    public static final int intakeExtensionMotor = 27;
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
 
-    public static final double intakeExtendedPosition = 1; // change later
-    public static final double intakeContractedPosition = 0; // change later
+    public static final double intakeExtendedPosition = 10.5; // seems to be like 1/2" short
+    public static final double intakeContractedPosition = 0;
 
     // PID constants for the extension
     public static final double intakeKP = 0.1;
     public static final double intakeKI = 0;
     public static final double intakeKD = 0;
-
-
-
-    // boolean to see if we should use the PID loop (for testing)
-    public static final boolean usePID = false;
   }
 
 }
