@@ -27,32 +27,20 @@ public class Intake extends SubsystemBase {
   private SparkFlex intakeExtensionMotor = new SparkFlex(Constants.IntakeConstants.intakeExtensionMotor,
       MotorType.kBrushless);
   private SparkFlexConfig intakeExtensionConfig = new SparkFlexConfig();
-  // NOT doing this as there's no way to reset the reference position
-  // instead using the ProfiledPIDController so we can manually put in the output
-  // private SparkClosedLoopController intakeExtensionController =
-  // intakeExtensionMotor.getClosedLoopController();
-  private final TrapezoidProfile.Constraints intakeExtensionConstraints = new TrapezoidProfile.Constraints(20, 80);
-  private final ProfiledPIDController intakeExtensionController = new ProfiledPIDController(
-      Constants.IntakeConstants.intakeKP, Constants.IntakeConstants.intakeKI, Constants.IntakeConstants.intakeKD,
-      intakeExtensionConstraints, Constants.deltaTime);
+
   private boolean shouldBeExtended = false;
 
   public Intake() {
-    // define the configuration for the positionFactor and velocityFactor for the
-    // intake extension motor
-    // from 2025 Elevator code
-
-    // SmartDashboard.putNumber("intakeExtensionInches",0.0);
-
-
-    double sprocketDiameter = 2; // 22 teeth at 0.25 inch pitch
-    double gearRatio = 5; // 20:1
+    double sprocketDiameter = 2; // inches
+    double gearRatio = 5; // 5:1
     double driveConversionPositionFactor = (sprocketDiameter * Math.PI) / gearRatio;
     double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
 
-    intakeExtensionConfig.encoder.positionConversionFactor(driveConversionVelocityFactor);
+    intakeExtensionConfig.encoder.positionConversionFactor(driveConversionPositionFactor);
     intakeExtensionConfig.encoder.velocityConversionFactor(driveConversionVelocityFactor);
     intakeExtensionConfig.idleMode(IdleMode.kCoast); // coast mode to avoid holding the position
+
+    intakeExtensionConfig.inverted(true);
 
     intakeExtensionMotor.configure(intakeExtensionConfig, ResetMode.kResetSafeParameters,
         PersistMode.kPersistParameters);
@@ -86,9 +74,17 @@ public class Intake extends SubsystemBase {
   public void enforceIntakeExtension() {
     double setpoint = shouldBeExtended ? Constants.IntakeConstants.intakeExtendedPosition
         : Constants.IntakeConstants.intakeContractedPosition;
-    intakeExtensionController.setGoal(setpoint);
-    // set based on the goal
-    intakeExtensionMotor.set(intakeExtensionController.calculate(intakeExtensionMotor.getEncoder().getPosition()));
+
+    double currentPos = intakeExtensionMotor.getEncoder().getPosition();
+
+    double speed = 0;
+    if (setpoint > currentPos) {
+      speed = 0.05;
+    } else if (setpoint < currentPos) {
+      speed = -0.05;
+    }
+
+    intakeExtensionMotor.set(clamp(speed, -0.05, 0.05));
   }
 
   public void setIntakeExtension(boolean extended) {
@@ -104,20 +100,14 @@ public class Intake extends SubsystemBase {
     return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - targetPosition) < .5;
   }
 
-  // // in case we want to manually see these things
-  // // comment out the default command at the beginning
-  // @Override
-  // public void periodic(){
-  //   double intakePosition = SmartDashboard.getNumber("intakeExtensionInches",0.0);
+  // in case we want to manually see these things
+  // comment out the default command at the beginning
+  @Override
+  public void periodic(){
+    SmartDashboard.putNumber("intakeExtensionActual", intakeExtensionMotor.getEncoder().getPosition());
+  }
 
-  //   intakeExtensionController.setGoal(intakePosition);
-  //   // if it's 0, then don't set any power...
-  //   if(intakePosition == 0){
-  //     intakeExtensionMotor.set(0);
-  //   }else{
-  //     intakeExtensionMotor.set(intakeExtensionController.calculate(intakeExtensionMotor.getEncoder().getPosition()));
-  //   }
-
-  //   SmartDashboard.getNumber("intakeExtensionActual", intakeExtensionMotor.getEncoder().getPosition());
-  // }
+  public static double clamp(double val, double min, double max) {
+    return Math.max(min, Math.min(max, val));
+  }
 }
