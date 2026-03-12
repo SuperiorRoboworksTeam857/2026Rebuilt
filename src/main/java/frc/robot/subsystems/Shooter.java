@@ -147,8 +147,6 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-
-
     Pose2d robotPose = s_swerve.getPose();
     Pose2d shooterTargetPose = whereToShootAt(robotPose);
     Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());

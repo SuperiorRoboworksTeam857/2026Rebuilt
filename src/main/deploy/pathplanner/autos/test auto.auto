@@ -5,21 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "startIntake"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "test path"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopIntake"
+            "pathName": "center to tower"
           }
         }
       ]

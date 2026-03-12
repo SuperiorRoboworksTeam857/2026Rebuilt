@@ -93,6 +93,13 @@ public class Intake extends SubsystemBase {
     intakeExtensionMotor.set(speed);
   }
 
+  public boolean isIntakeExtended() {
+    return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - Constants.IntakeConstants.intakeExtendedPosition) < 1;
+  }
+
+  public boolean isIntakeRetracted() {
+    return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - Constants.IntakeConstants.intakeContractedPosition) < 1;
+  }
   // in case we want to manually see these things
   // comment out the default command at the beginning
   @Override

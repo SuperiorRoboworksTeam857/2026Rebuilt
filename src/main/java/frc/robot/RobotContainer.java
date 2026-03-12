@@ -150,6 +150,14 @@ public class RobotContainer {
                                 () -> m_feeder.stopFeeder(), m_feeder),
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
+        NamedCommands.registerCommand("extendIntake",
+                new RunCommand(() -> m_intake.extendIntake(), m_intake)
+                        .until(m_intake::isIntakeExtended)
+                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake)));
+        NamedCommands.registerCommand("retractIntake",
+                new RunCommand(() -> m_intake.retractIntake(), m_intake)
+                        .until(m_intake::isIntakeRetracted)
+                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake)));
 
         Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
         Command driveRobotOrientedAngularVelocity = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add
