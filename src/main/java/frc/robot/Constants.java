@@ -67,7 +67,7 @@ public final class Constants {
     public static final double shooterKP = 0;
     public static final double shooterKI = 0;
     public static final double shooterKD = 0;
-    public static final double shooterKV = 0;
+    public static final double shooterKV = 0.0018;
 
     // Turret constants for the turret
     public static final double turretKP = 2.5;
@@ -78,9 +78,6 @@ public final class Constants {
     public static final double turretPositionFactor = (20.0 / 200.0) * (1.0 / 5.0); // 1/50
     public static final double turretMinLimit = -0.45; // -0.45
     public static final double turretMaxLimit = 0.4; // 0.4
-
-    // boolean to see if we should use the PID loop (for testing)
-    public static final boolean usePID = true;
 
 
     public static final Pose2d redHubLocation =  new Pose2d(Units.inchesToMeters(469.11),
@@ -140,7 +137,7 @@ public final class Constants {
     public static final int intakeExtensionMotor = 27;
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
 
-    public static final double intakeExtendedPosition = 10.5; // seems to be like 1/2" short
+    public static final double intakeExtendedPosition = 11;
     public static final double intakeContractedPosition = 0;
 
     // PID constants for the extension
