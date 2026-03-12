@@ -249,11 +249,11 @@ public class Shooter extends SubsystemBase {
 
     boolean inAllianceZone = false;
     if (isBlueAlliance()) {
-      if (x_inches < 150) {
+      if (x_inches < 160) {
         inAllianceZone = true;
       }
     } else {
-      if (x_inches > 500) {
+      if (x_inches > 490) {
         inAllianceZone = true;
       }
     }
