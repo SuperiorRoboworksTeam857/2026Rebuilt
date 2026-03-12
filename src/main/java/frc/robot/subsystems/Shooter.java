@@ -16,6 +16,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -55,8 +56,23 @@ public class Shooter extends SubsystemBase {
 
   private final SwerveSubsystem s_swerve;
 
+  // Example LUT (distance in meters, shooter RPM)
+  private static final double minimumShootingDistance = 2.0;
+  private static final InterpolatingDoubleTreeMap SHOOTER_MAP = new InterpolatingDoubleTreeMap();
+  static {
+    SHOOTER_MAP.put(2.0, 2600.0); // 2600 was checked at about 203cm in room 110, no goal actually present
+    SHOOTER_MAP.put(2.5, 3400.0);
+    SHOOTER_MAP.put(3.0, 3650.0);
+    SHOOTER_MAP.put(3.5, 3900.0);
+    SHOOTER_MAP.put(4.0, 4100.0);
+    SHOOTER_MAP.put(4.5, 4350.0);
+    SHOOTER_MAP.put(5.0, 4550.0);
+  }
+
   public Shooter(SwerveSubsystem swerve) {
     this.s_swerve = swerve;
+
+    
 
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
@@ -75,6 +91,7 @@ public class Shooter extends SubsystemBase {
       .d(Constants.ShooterConstants.turretKD);
     turretMotorConfig.encoder
       .positionConversionFactor(Constants.ShooterConstants.turretPositionFactor);
+    turretMotorConfig.smartCurrentLimit(30);
     
     shooterMotorConfig2.inverted(true);
 
@@ -91,9 +108,6 @@ public class Shooter extends SubsystemBase {
     // 2: persist even if the robot power goes off (do we want these changes to be temporary)
 
     //turretMotor.getEncoder().setPosition(0);
-
-    SmartDashboard.putNumber("turretMotorPosition",0.0);
-
   }
   public void setTurretPosition(double position) {
     position = clamp(position,
@@ -111,7 +125,6 @@ public class Shooter extends SubsystemBase {
     // act on the shooterMotor1Controller and 2... the controller CONTROLS the motor
     shooterMotor1Controller.setSetpoint(velocity, ControlType.kVelocity);
     shooterMotor2Controller.setSetpoint(velocity, ControlType.kVelocity); // make sure VELOCITY :), not POSITION
-    // position will be useful elsewhere
   }
 
   public void runShooter(double speed) {
@@ -119,10 +132,10 @@ public class Shooter extends SubsystemBase {
     shooterMotor2.set(speed * Constants.ShooterConstants.shooterSpeedMultiplier);
   }
   public void powerShooter(double speed) {
-    if(Constants.ShooterConstants.usePID) {
+    if(speed != 0) {
       setShooterVelocity(speed);
     } else {
-      runShooter(speed);
+      runShooter(speed); // Let it coast down to zero rather that velocity controller forcing it down
     }
   }
   public void startShooter() {
@@ -134,19 +147,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // default system
-    //double shooterMotorPower = SmartDashboard.getNumber("shooterMotorSpeed", 0f);
-    targetShooterSpeed = 0.3;
-    // now apply this to either the controller or basic speed
-    // if(Constants.ShooterConstants.usePID) {
-    //   setShooterVelocity(shooterMotorPower);
-    // }
-    // else {
-    //   runShooter(shooterMotorPower);
-    // }
 
-    //double turretMotorPosition = SmartDashboard.getNumber("turretMotorPosition",0.0);
 
     Pose2d robotPose = s_swerve.getPose();
     Pose2d shooterTargetPose = whereToShootAt(robotPose);
@@ -161,6 +162,17 @@ public class Shooter extends SubsystemBase {
 
     setTurretPosition(shootRotationInRobotCoords.getRotations());
 
+    // Calculate shooter speed from distance to target using lookup table
+    double distanceToGoal = shootDirection.getNorm();
+    if (distanceToGoal >= minimumShootingDistance) {
+      targetShooterSpeed = SHOOTER_MAP.get(shootDirection.getNorm());
+    }
+    else { // if too close, don't try to run shooter
+      targetShooterSpeed = 0;
+    }
+    //targetShooterSpeed = 2600;
+
+
     SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
 
     // put both of these numbers on the smartdashboard
@@ -168,19 +180,21 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
 
 
-    SmartDashboard.putBoolean("Shooter On Target", isShooterOnTarget());
-    SmartDashboard.putBoolean("Shooter Is At Speed", isShooterAtSpeed());
+    SmartDashboard.putBoolean("On Target", isShooterOnTarget());
+    SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
+    SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
 
   }
   public boolean isShooterAtSpeed(){
-    return shooterMotor1.getEncoder().getVelocity() >= targetShooterSpeed;
+    return Math.abs(shooterMotor1.getEncoder().getVelocity() - targetShooterSpeed) < 500
+           && targetShooterSpeed > 500;
   }
   public boolean isShooterOnTarget(){
     return Math.abs(turretMotor.getEncoder().getPosition() -
                     shootRotationInRobotCoords.getRotations()) < 0.01;
   }
   public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
-    runShooter(targetShooterSpeed);
+    powerShooter(targetShooterSpeed);
     if (isShooterAtSpeed()){
       feeder.startFeeder();
       spindexer.startSpindexer();
