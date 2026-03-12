@@ -68,11 +68,11 @@ public class RobotContainer {
             () -> driverStick.getX() * -1 * driveSpeedScaling)
             .withControllerRotationAxis(() -> driverStick.getZ() * -1 * driveSpeedScaling)
             .deadband(OperatorConstants.DEADBAND)
-            //.scaleTranslation(NORMAL_SPEED)
             .allianceRelativeControl(true);
 
     SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
             .allianceRelativeControl(false);
+    
 
     private final Intake m_intake = new Intake();
     private final Spindexer m_spindexer = new Spindexer();
@@ -224,18 +224,18 @@ public class RobotContainer {
         // new RunCommand(
         // () -> m_spindexer.startSpindexer(), m_spindexer)));
 
-        intakeAndSpindex.whileTrue(
-                new SequentialCommandGroup(
-                        new InstantCommand(
-                                () -> m_intake.setIntakeExtension(true), m_intake),
-                        new RunCommand(
-                                () -> m_intake.enforceIntakeExtension(), m_intake)
-                                .until(m_intake::isIntakeAtTargetExtension),
-                        new ParallelRaceGroup(
-                                new RunCommand(
-                                        () -> m_intake.startIntake(), m_intake),
-                                new RunCommand(
-                                        () -> m_spindexer.startSpindexer(), m_spindexer))));
+        // intakeAndSpindex.whileTrue(
+        //         new SequentialCommandGroup(
+        //                 new InstantCommand(
+        //                         () -> m_intake.setIntakeExtension(true), m_intake),
+        //                 new RunCommand(
+        //                         () -> m_intake.enforceIntakeExtension(), m_intake)
+        //                         .until(m_intake::isIntakeAtTargetExtension),
+        //                 new ParallelRaceGroup(
+        //                         new RunCommand(
+        //                                 () -> m_intake.startIntake(), m_intake),
+        //                         new RunCommand(
+        //                                 () -> m_spindexer.startSpindexer(), m_spindexer))));
 
         manualShooter.whileTrue(
                 new RunCommand(
@@ -265,20 +265,8 @@ public class RobotContainer {
                         () -> m_intake.reverseIntake(), m_intake).onlyIf(
                                 () -> (!intakeIn.getAsBoolean() && !intakeAndSpindex.getAsBoolean())));
 
-        intakeExtend.whileTrue(
-                new SequentialCommandGroup(
-                        new InstantCommand(
-                                () -> m_intake.setIntakeExtension(true), m_intake),
-                        new RunCommand(
-                                () -> m_intake.enforceIntakeExtension(), m_intake)));
-
-        intakeContract.whileTrue(
-                new SequentialCommandGroup(
-                        new InstantCommand(
-                                () -> m_intake.setIntakeExtension(false), m_intake),
-                        new RunCommand(
-                                () -> m_intake.enforceIntakeExtension(), m_intake)));
-
+        intakeExtend.whileTrue(new RunCommand(() -> m_intake.extendIntake(), m_intake));
+        intakeContract.whileTrue(new RunCommand(() -> m_intake.retractIntake(), m_intake));
     }
 
     public void setMotorBrake(boolean brake) {

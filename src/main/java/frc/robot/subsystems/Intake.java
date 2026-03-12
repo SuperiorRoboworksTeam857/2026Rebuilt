@@ -28,8 +28,6 @@ public class Intake extends SubsystemBase {
       MotorType.kBrushless);
   private SparkFlexConfig intakeExtensionConfig = new SparkFlexConfig();
 
-  private boolean shouldBeExtended = false;
-
   public Intake() {
     double sprocketDiameter = 2; // inches
     double gearRatio = 5; // 5:1
@@ -71,33 +69,28 @@ public class Intake extends SubsystemBase {
     intakeExtensionMotor.set(0); // set to 0 power so coast happens
   }
 
-  public void enforceIntakeExtension() {
-    double setpoint = shouldBeExtended ? Constants.IntakeConstants.intakeExtendedPosition
-        : Constants.IntakeConstants.intakeContractedPosition;
-
+  public void extendIntake() {
+    double speed = 0;
     double currentPos = intakeExtensionMotor.getEncoder().getPosition();
 
-    double speed = 0;
-    if (setpoint > currentPos) {
-      speed = 0.05;
-    } else if (setpoint < currentPos) {
-      speed = -0.05;
+    if (currentPos < Constants.IntakeConstants.intakeExtendedPosition) {
+      speed = 0.1;
+    } else {
+      speed = 0;
     }
-
-    intakeExtensionMotor.set(clamp(speed, -0.05, 0.05));
+    intakeExtensionMotor.set(speed);
   }
 
-  public void setIntakeExtension(boolean extended) {
-    shouldBeExtended = extended;
-  }
+  public void retractIntake() {
+    double speed = 0;
+    double currentPos = intakeExtensionMotor.getEncoder().getPosition();
 
-  public boolean isIntakeAtTargetExtension() {
-    double targetPosition = shouldBeExtended ? Constants.IntakeConstants.intakeExtendedPosition
-        : Constants.IntakeConstants.intakeContractedPosition;
-
-    // change to fit the allowable position
-    // within half an inch
-    return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - targetPosition) < .5;
+    if (currentPos > Constants.IntakeConstants.intakeContractedPosition) {
+      speed = -0.1;
+    } else {
+      speed = 0;
+    }
+    intakeExtensionMotor.set(speed);
   }
 
   // in case we want to manually see these things
@@ -105,9 +98,5 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic(){
     SmartDashboard.putNumber("intakeExtensionActual", intakeExtensionMotor.getEncoder().getPosition());
-  }
-
-  public static double clamp(double val, double min, double max) {
-    return Math.max(min, Math.min(max, val));
   }
 }
