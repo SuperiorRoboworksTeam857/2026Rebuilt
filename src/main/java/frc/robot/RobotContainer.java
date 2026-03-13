@@ -167,7 +167,7 @@ public class RobotContainer {
         // Configure the trigger bindings
         configureBindings();
     }
-
++
     private void configureBindings() {
         // SWERVE CONTROLS
         zeroGyro.onTrue(new InstantCommand(() -> m_swerve.zeroGyroWithAlliance()));
@@ -181,30 +181,15 @@ public class RobotContainer {
 
         // SHOOTER CONTROLS
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
-
-        manualShooter.whileTrue(
-                new RunCommand(
-                        () -> m_shooter.startShooter(), m_shooter));
+        manualShooter.whileTrue(new RunCommand(() -> m_shooter.startShooter(), m_shooter));
 
         // SPINDEXER CONTROLS
-        reverseSpindexer.whileTrue(
-                new RunCommand(
-                        () -> m_spindexer.reverseSpindexer(), m_spindexer).onlyIf(
-                                () -> !forwardSpindexer.getAsBoolean()));
-
-        forwardSpindexer.whileTrue(
-                new RunCommand(
-                        () -> m_spindexer.startSpindexer(), m_spindexer));
+        reverseSpindexer.whileTrue(new RunCommand(() -> m_spindexer.reverseSpindexer(), m_spindexer));
+        forwardSpindexer.whileTrue(new RunCommand(() -> m_spindexer.startSpindexer(), m_spindexer));
 
         // FEEDER CONTROLS
-        reverseFeeder.whileTrue(
-                new RunCommand(
-                        () -> m_feeder.reverseFeeder(), m_feeder).onlyIf(
-                                () -> !forwardFeeder.getAsBoolean()));
-
-        forwardFeeder.whileTrue(
-                new RunCommand(
-                        () -> m_feeder.startFeeder(), m_feeder));
+        reverseFeeder.whileTrue(new RunCommand(() -> m_feeder.reverseFeeder(), m_feeder));
+        forwardFeeder.whileTrue(new RunCommand(() -> m_feeder.startFeeder(), m_feeder));
 
         // INTAKE CONTROLS
         intakeIn.whileTrue(new RunCommand(() -> m_intake.startIntake(), m_intake));
