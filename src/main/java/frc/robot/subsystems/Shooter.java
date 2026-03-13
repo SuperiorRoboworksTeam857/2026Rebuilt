@@ -71,7 +71,6 @@ public class Shooter extends SubsystemBase {
 
   public Shooter(SwerveSubsystem swerve) {
     this.s_swerve = swerve;
-
     
 
     // setup PID parameters
@@ -190,10 +189,11 @@ public class Shooter extends SubsystemBase {
   public boolean isShooterOnTarget(){
     return Math.abs(turretMotor.getEncoder().getPosition() -
                     shootRotationInRobotCoords.getRotations()) < 0.01;
+    // typical error seems to be 0.004 or 0.007 rotations
   }
   public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
     powerShooter(targetShooterSpeed);
-    if (isShooterAtSpeed()){
+    if (isShooterAtSpeed() && isShooterOnTarget()){
       feeder.startFeeder();
       spindexer.startSpindexer();
     }
