@@ -102,11 +102,6 @@ public class RobotContainer {
     private final JoystickButton intakeContract = new JoystickButton(gamepad,
             Constants.ControllerConstants.intakeContractButton);
 
-    private final Trigger alignAndShoot = new Trigger(
-            () -> gamepad.getRawAxis(Constants.ControllerConstants.alignAndShoot) > 0.7);
-    private final Trigger intakeAndSpindex = new Trigger(
-            () -> gamepad.getRawAxis(Constants.ControllerConstants.intakeAndSpindex) > 0.7);
-
     public final AprilTagFieldLayout layout;
 
     /**
@@ -187,68 +182,14 @@ public class RobotContainer {
         highSpeed.whileTrue(new InstantCommand(() -> driveSpeedScaling = FULL_SPEED))
                  .onFalse(new InstantCommand(() -> driveSpeedScaling = NORMAL_SPEED));
 
-        // alignAndShoot.whileTrue(
-        // new SequentialCommandGroup(
-        // new InstantCommand(
-        // () -> m_Shooter.startShooter(), m_Shooter),
-        // new WaitUntilCommand(m_Shooter::isShooterAtSpeed),
-        // new InstantCommand(
-        // () -> m_feeder.startFeeder(), m_feeder),
-        // new InstantCommand(
-        // () -> m_spindexer.startSpindexer(), m_spindexer))
-
-        // );
+        // SHOOTER CONTROLS
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
-
-        // shootShooter.onTrue(
-        // new SequentialCommandGroup(
-        // new ParallelRaceGroup(
-        // new RunCommand(
-        // () -> m_shooter.startShooter(), m_shooter
-        // ),
-        // new WaitCommand(.7)
-        // ),
-        // new ParallelRaceGroup(
-        // new RunCommand(
-        // () -> m_shooter.startShooter(), m_shooter
-        // ),
-        // new RunCommand(
-        // () -> m_feeder.startFeeder(), m_feeder
-        // ),
-        // new RunCommand(
-        // () -> m_spindexer.startSpindexer(), m_spindexer
-        // )
-        // )
-        // )
-        // );
-
-        // 1. extend intake if not already
-        // 2. once extended, begin the intake
-        // 3. run the spindexer as well
-        // intakeAndSpindex.whileTrue(
-        // new ParallelRaceGroup(
-        // new RunCommand(
-        // () -> m_intake.startIntake(), m_intake),
-        // new RunCommand(
-        // () -> m_spindexer.startSpindexer(), m_spindexer)));
-
-        // intakeAndSpindex.whileTrue(
-        //         new SequentialCommandGroup(
-        //                 new InstantCommand(
-        //                         () -> m_intake.setIntakeExtension(true), m_intake),
-        //                 new RunCommand(
-        //                         () -> m_intake.enforceIntakeExtension(), m_intake)
-        //                         .until(m_intake::isIntakeAtTargetExtension),
-        //                 new ParallelRaceGroup(
-        //                         new RunCommand(
-        //                                 () -> m_intake.startIntake(), m_intake),
-        //                         new RunCommand(
-        //                                 () -> m_spindexer.startSpindexer(), m_spindexer))));
 
         manualShooter.whileTrue(
                 new RunCommand(
                         () -> m_shooter.startShooter(), m_shooter));
 
+        // SPINDEXER CONTROLS
         reverseSpindexer.whileTrue(
                 new RunCommand(
                         () -> m_spindexer.reverseSpindexer(), m_spindexer).onlyIf(
@@ -258,6 +199,7 @@ public class RobotContainer {
                 new RunCommand(
                         () -> m_spindexer.startSpindexer(), m_spindexer));
 
+        // FEEDER CONTROLS
         reverseFeeder.whileTrue(
                 new RunCommand(
                         () -> m_feeder.reverseFeeder(), m_feeder).onlyIf(
@@ -267,11 +209,9 @@ public class RobotContainer {
                 new RunCommand(
                         () -> m_feeder.startFeeder(), m_feeder));
 
+        // INTAKE CONTROLS
         intakeIn.whileTrue(new RunCommand(() -> m_intake.startIntake(), m_intake));
-        intakeOut.whileTrue(
-                new RunCommand(
-                        () -> m_intake.reverseIntake(), m_intake).onlyIf(
-                                () -> (!intakeIn.getAsBoolean() && !intakeAndSpindex.getAsBoolean())));
+        intakeOut.whileTrue(new RunCommand(() -> m_intake.reverseIntake(), m_intake));
 
         intakeExtend.whileTrue(new RunCommand(() -> m_intake.extendIntake(), m_intake));
         intakeContract.whileTrue(new RunCommand(() -> m_intake.retractIntake(), m_intake));
@@ -288,7 +228,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         if (buttonBox.getRawButton(3)) {
-            return new PathPlannerAuto("test auto");
+            return new PathPlannerAuto("Center Auto");
         } else if (buttonBox.getRawButton(4)) {
             return new PathPlannerAuto("Left Trench Auto");
         }
