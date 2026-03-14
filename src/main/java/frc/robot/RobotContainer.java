@@ -88,16 +88,19 @@ public class RobotContainer {
             Constants.ControllerConstants.shootShooterButton);
     private final JoystickButton manualShooter = new JoystickButton(gamepad,
             Constants.ControllerConstants.manualShooterButton);
-    private final POVButton reverseSpindexer = new POVButton(gamepad, Constants.ControllerConstants.reverseSpindexer);
-    private final POVButton forwardSpindexer = new POVButton(gamepad, Constants.ControllerConstants.forwardSpindexer);
-    private final POVButton reverseFeeder = new POVButton(gamepad, Constants.ControllerConstants.reverseFeeder);
-    private final POVButton forwardFeeder = new POVButton(gamepad, Constants.ControllerConstants.forwardFeeder);
+//     private final POVButton reverseSpindexer = new POVButton(gamepad, Constants.ControllerConstants.reverseSpindexer);
+//     private final POVButton forwardSpindexer = new POVButton(gamepad, Constants.ControllerConstants.forwardSpindexer);
+//     private final POVButton reverseFeeder = new POVButton(gamepad, Constants.ControllerConstants.reverseFeeder);
+//     private final POVButton forwardFeeder = new POVButton(gamepad, Constants.ControllerConstants.forwardFeeder);
     private final JoystickButton intakeIn = new JoystickButton(gamepad, Constants.ControllerConstants.intakeInButton);
     private final JoystickButton intakeOut = new JoystickButton(gamepad, Constants.ControllerConstants.intakeOutButton);
-    private final JoystickButton intakeExtend = new JoystickButton(gamepad,
-            Constants.ControllerConstants.intakeExtendButton);
-    private final JoystickButton intakeContract = new JoystickButton(gamepad,
-            Constants.ControllerConstants.intakeContractButton);
+//     private final JoystickButton intakeExtend = new JoystickButton(gamepad,
+//             Constants.ControllerConstants.intakeExtendButton);
+//     private final JoystickButton intakeContract = new JoystickButton(gamepad,
+//             Constants.ControllerConstants.intakeContractButton);
+
+    private final POVButton intakeExtend = new POVButton(gamepad, Constants.ControllerConstants.intakeExtendPOV);
+    private final POVButton intakeContract = new POVButton(gamepad, Constants.ControllerConstants.intakeRetractPOV);
 
     public final AprilTagFieldLayout layout;
 
@@ -184,12 +187,12 @@ public class RobotContainer {
         manualShooter.whileTrue(new RunCommand(() -> m_shooter.startShooter(), m_shooter));
 
         // SPINDEXER CONTROLS
-        reverseSpindexer.whileTrue(new RunCommand(() -> m_spindexer.reverseSpindexer(), m_spindexer));
-        forwardSpindexer.whileTrue(new RunCommand(() -> m_spindexer.startSpindexer(), m_spindexer));
+        // reverseSpindexer.whileTrue(new RunCommand(() -> m_spindexer.reverseSpindexer(), m_spindexer));
+        // forwardSpindexer.whileTrue(new RunCommand(() -> m_spindexer.startSpindexer(), m_spindexer));
 
         // FEEDER CONTROLS
-        reverseFeeder.whileTrue(new RunCommand(() -> m_feeder.reverseFeeder(), m_feeder));
-        forwardFeeder.whileTrue(new RunCommand(() -> m_feeder.startFeeder(), m_feeder));
+        // reverseFeeder.whileTrue(new RunCommand(() -> m_feeder.reverseFeeder(), m_feeder));
+        // forwardFeeder.whileTrue(new RunCommand(() -> m_feeder.startFeeder(), m_feeder));
 
         // INTAKE CONTROLS
         intakeIn.whileTrue(new RunCommand(() -> m_intake.startIntake(), m_intake));

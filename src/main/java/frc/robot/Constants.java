@@ -124,12 +124,15 @@ public final class Constants {
     public static final int intakeOutButton = XboxController.Button.kLeftBumper.value;
     public static final int alignAndShoot = XboxController.Axis.kRightTrigger.value;
     public static final int intakeAndSpindex = XboxController.Axis.kLeftTrigger.value;
-    public static final int intakeExtendButton = XboxController.Button.kA.value;
-    public static final int intakeContractButton = XboxController.Button.kB.value;
-    public static final int reverseSpindexer = 270;
-    public static final int forwardSpindexer = 90;
-    public static final int reverseFeeder = 180;
-    public static final int forwardFeeder = 0;
+    // public static final int intakeExtendButton = XboxController.Button.kA.value;
+    // public static final int intakeContractButton = XboxController.Button.kB.value;
+    // public static final int reverseSpindexer = 270;
+    // public static final int forwardSpindexer = 90;
+    // public static final int reverseFeeder = 180;
+    // public static final int forwardFeeder = 0;
+
+    public static final int intakeExtendPOV = 180;
+    public static final int intakeRetractPOV = 0;
   }
 
   public static final class IntakeConstants {
