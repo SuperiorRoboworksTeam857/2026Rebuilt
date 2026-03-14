@@ -60,18 +60,20 @@ public class Shooter extends SubsystemBase {
   private static final double minimumShootingDistance = 2.0;
   private static final InterpolatingDoubleTreeMap SHOOTER_MAP = new InterpolatingDoubleTreeMap();
   static {
-    SHOOTER_MAP.put(2.0, 2600.0); // 2600 was checked at about 203cm in room 110, no goal actually present
-    SHOOTER_MAP.put(2.5, 3400.0);
-    SHOOTER_MAP.put(3.0, 3650.0);
-    SHOOTER_MAP.put(3.5, 3900.0);
-    SHOOTER_MAP.put(4.0, 4100.0);
-    SHOOTER_MAP.put(4.5, 4350.0);
-    SHOOTER_MAP.put(5.0, 4550.0);
+    SHOOTER_MAP.put(2.0, 2600.0);
+    SHOOTER_MAP.put(2.5, 2800.0);
+    SHOOTER_MAP.put(3.0, 3000.0);
+    SHOOTER_MAP.put(3.5, 3200.0);
+    SHOOTER_MAP.put(4.0, 3400.0);
+    SHOOTER_MAP.put(4.5, 3600.0);
+    SHOOTER_MAP.put(5.0, 3800.0);
+    SHOOTER_MAP.put(5.5, 4000.0);
   }
 
   public Shooter(SwerveSubsystem swerve) {
     this.s_swerve = swerve;
     
+    //SmartDashboard.putNumber("target shooter speed", 2600.0);
 
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
@@ -167,7 +169,7 @@ public class Shooter extends SubsystemBase {
     else { // if too close, don't try to run shooter
       targetShooterSpeed = 0;
     }
-    //targetShooterSpeed = 2600;
+    //targetShooterSpeed = SmartDashboard.getNumber("target shooter speed", 2600.0);
 
 
     SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
