@@ -58,6 +58,7 @@ public class Shooter extends SubsystemBase {
 
   // Example LUT (distance in meters, shooter RPM)
   private static final double minimumShootingDistance = 2.0;
+  private static final double maximumDistanceForCafeteria = 4.0;
   private static final InterpolatingDoubleTreeMap SHOOTER_MAP = new InterpolatingDoubleTreeMap();
   static {
     SHOOTER_MAP.put(2.0, 2600.0);
@@ -163,7 +164,7 @@ public class Shooter extends SubsystemBase {
 
     // Calculate shooter speed from distance to target using lookup table
     double distanceToGoal = shootDirection.getNorm();
-    if (distanceToGoal >= minimumShootingDistance) {
+    if (distanceToGoal >= minimumShootingDistance && distanceToGoal <= maximumDistanceForCafeteria) {
       targetShooterSpeed = SHOOTER_MAP.get(shootDirection.getNorm());
     }
     else { // if too close, don't try to run shooter
@@ -182,7 +183,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("On Target", isShooterOnTarget());
     SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
     SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
-
+    SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
+    
   }
   public boolean isShooterAtSpeed(){
     return Math.abs(shooterMotor1.getEncoder().getVelocity() - targetShooterSpeed) < 500
