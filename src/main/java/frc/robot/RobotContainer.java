@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -88,17 +89,11 @@ public class RobotContainer {
             Constants.ControllerConstants.shootShooterButton);
     private final JoystickButton manualShooter = new JoystickButton(gamepad,
             Constants.ControllerConstants.manualShooterButton);
-//     private final POVButton reverseSpindexer = new POVButton(gamepad, Constants.ControllerConstants.reverseSpindexer);
-//     private final POVButton forwardSpindexer = new POVButton(gamepad, Constants.ControllerConstants.forwardSpindexer);
-//     private final POVButton reverseFeeder = new POVButton(gamepad, Constants.ControllerConstants.reverseFeeder);
-//     private final POVButton forwardFeeder = new POVButton(gamepad, Constants.ControllerConstants.forwardFeeder);
+
+    private final JoystickButton reverseEverything = new JoystickButton(gamepad, Constants.ControllerConstants.reverseEverything);
+
     private final JoystickButton intakeIn = new JoystickButton(gamepad, Constants.ControllerConstants.intakeInButton);
     private final JoystickButton intakeOut = new JoystickButton(gamepad, Constants.ControllerConstants.intakeOutButton);
-//     private final JoystickButton intakeExtend = new JoystickButton(gamepad,
-//             Constants.ControllerConstants.intakeExtendButton);
-//     private final JoystickButton intakeContract = new JoystickButton(gamepad,
-//             Constants.ControllerConstants.intakeContractButton);
-
     private final POVButton intakeExtend = new POVButton(gamepad, Constants.ControllerConstants.intakeExtendPOV);
     private final POVButton intakeContract = new POVButton(gamepad, Constants.ControllerConstants.intakeRetractPOV);
 
@@ -186,14 +181,14 @@ public class RobotContainer {
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
         manualShooter.whileTrue(new RunCommand(() -> m_shooter.startShooter(), m_shooter));
 
-        // SPINDEXER CONTROLS
-        // reverseSpindexer.whileTrue(new RunCommand(() -> m_spindexer.reverseSpindexer(), m_spindexer));
-        // forwardSpindexer.whileTrue(new RunCommand(() -> m_spindexer.startSpindexer(), m_spindexer));
-
-        // FEEDER CONTROLS
-        // reverseFeeder.whileTrue(new RunCommand(() -> m_feeder.reverseFeeder(), m_feeder));
-        // forwardFeeder.whileTrue(new RunCommand(() -> m_feeder.startFeeder(), m_feeder));
-
+        // SPINDEXER AND FEEDER CONTROLS
+        reverseEverything.whileTrue(
+                new ParallelCommandGroup(
+                        new RunCommand(() -> m_spindexer.reverseSpindexer(), m_spindexer),
+                        new RunCommand(() -> m_feeder.reverseFeeder(), m_feeder)
+                )
+        );
+        
         // INTAKE CONTROLS
         intakeIn.whileTrue(new RunCommand(() -> m_intake.startIntake(), m_intake));
         intakeOut.whileTrue(new RunCommand(() -> m_intake.reverseIntake(), m_intake));
