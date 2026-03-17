@@ -162,7 +162,11 @@ public class Shooter extends SubsystemBase {
 
     s_swerve.field.getObject("target").setPose(shooterTargetPose);
 
-    setTurretPosition(shootRotationInRobotCoords.getRotations());
+    // Only command the turret if it can reach the desired position
+    if (shootRotationInRobotCoords.getRotations() > Constants.ShooterConstants.turretMinLimit &&
+        shootRotationInRobotCoords.getRotations() < Constants.ShooterConstants.turretMaxLimit) {
+      setTurretPosition(shootRotationInRobotCoords.getRotations());
+    }
 
     // Calculate shooter speed from distance to target using lookup table
     double distanceToGoal = shootDirection.getNorm();
