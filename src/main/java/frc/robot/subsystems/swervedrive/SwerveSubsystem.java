@@ -454,14 +454,15 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void zeroGyroWithAlliance()
   {
-    if (isRedAlliance())
-    {
+    // The 180 degree offset is backwards from normal since our intake is the front,
+    // but we want to zero the gyro with the intake facing the driver station since
+    // that is a more normal scoring orientation
+    if (isRedAlliance()) {
+      zeroGyro();
+    } else {
       zeroGyro();
       //Set the pose 180 degrees
       resetOdometry(new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(180)));
-    } else
-    {
-      zeroGyro();
     }
   }
 
