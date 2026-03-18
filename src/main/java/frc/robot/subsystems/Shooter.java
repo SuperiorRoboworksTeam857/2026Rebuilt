@@ -152,6 +152,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     Pose2d robotPose = s_swerve.getPose();
+    Translation2d robotVelocity = new Translation2d(s_swerve.getFieldVelocity().vxMetersPerSecond,s_swerve.getFieldVelocity().vyMetersPerSecond);
     Pose2d shooterTargetPose = whereToShootAt(robotPose);
     // get the VECTOR from the robot to the target (translation2d)
     // this is to get the SOTF
