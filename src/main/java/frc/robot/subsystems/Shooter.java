@@ -153,6 +153,9 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     Pose2d robotPose = s_swerve.getPose();
     Pose2d shooterTargetPose = whereToShootAt(robotPose);
+    // get the VECTOR from the robot to the target (translation2d)
+    // this is to get the SOTF
+    // https://blog.eeshwark.com/robotblog/shooting-on-the-fly
     Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());
     Rotation2d shootRotationInFieldCoords = shootDirection.getAngle();
     Rotation2d robotRotationInFieldCoords = robotPose.getRotation();
