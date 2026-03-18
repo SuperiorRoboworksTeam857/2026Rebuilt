@@ -208,9 +208,11 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         if (buttonBox.getRawButton(3)) {
-            return new PathPlannerAuto("Center Auto");
-        } else if (buttonBox.getRawButton(4)) {
             return new PathPlannerAuto("Left Trench Auto");
+        } else if (buttonBox.getRawButton(4)) {
+            return new PathPlannerAuto("Center Auto");
+        } else if (buttonBox.getRawButton(5)) {
+            return new PathPlannerAuto("Right Trench Auto");
         }
 
         // An example command will be run in autonomous
