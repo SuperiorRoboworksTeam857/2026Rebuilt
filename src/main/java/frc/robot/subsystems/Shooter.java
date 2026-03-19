@@ -194,7 +194,26 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
     SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
 
-    SmartDashboard.putBoolean("Hub Active", isHubActive());
+
+    String hubActiveColor = "#FFFFFF";
+    HUB_STATE state = isHubActive();
+    switch (state) {
+      case ACTIVE:
+        hubActiveColor = "#4CAF50";
+        break;
+      case INACTIVE:
+        hubActiveColor = "#F44336";
+        break;
+      case ABOUT_TO_BE_ACTIVE:
+        hubActiveColor = "#000099";
+        break;
+      case ABOUT_TO_BE_INACTIVE:
+        hubActiveColor = "#CCCC00";
+        break;
+    }
+
+    SmartDashboard.putString("Hub Active", hubActiveColor);
+    SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     
   }
   public boolean isShooterAtSpeed(){
@@ -278,19 +297,26 @@ public class Shooter extends SubsystemBase {
     return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
   }
 
-  public boolean isHubActive() {
+  public enum HUB_STATE {
+    INACTIVE,
+    ABOUT_TO_BE_ACTIVE,
+    ACTIVE,
+    ABOUT_TO_BE_INACTIVE
+  }
+
+  public HUB_STATE isHubActive() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     // If we have no alliance, we cannot be enabled, therefore no hub.
     if (alliance.isEmpty()) {
-      return false;
+      return HUB_STATE.INACTIVE;
     }
     // Hub is always enabled in autonomous.
     if (DriverStation.isAutonomousEnabled()) {
-      return true;
+      return HUB_STATE.ACTIVE;
     }
     // At this point, if we're not teleop enabled, there is no hub.
     if (!DriverStation.isTeleopEnabled()) {
-      return false;
+      return HUB_STATE.INACTIVE;
     }
 
     // We're teleop enabled, compute.
@@ -298,7 +324,7 @@ public class Shooter extends SubsystemBase {
     String gameData = DriverStation.getGameSpecificMessage();
     // If we have no game data, we cannot compute, assume hub is active, as it's likely early in teleop.
     if (gameData.isEmpty()) {
-      return true;
+      return HUB_STATE.ACTIVE;
     }
     boolean redInactiveFirst = false;
     switch (gameData.charAt(0)) {
@@ -306,7 +332,7 @@ public class Shooter extends SubsystemBase {
       case 'B' -> redInactiveFirst = false;
       default -> {
         // If we have invalid game data, assume hub is active.
-        return true;
+        return HUB_STATE.ACTIVE;
       }
     }
 
@@ -316,24 +342,88 @@ public class Shooter extends SubsystemBase {
       case Blue -> redInactiveFirst;
     };
 
-    if (matchTime > 130) {
-      // Transition shift, hub is active.
-      return true;
-    } else if (matchTime > 105) {
-      // Shift 1
-      return shift1Active;
-    } else if (matchTime > 80) {
-      // Shift 2
-      return !shift1Active;
-    } else if (matchTime > 55) {
-      // Shift 3
-      return shift1Active;
-    } else if (matchTime > 30) {
-      // Shift 4
-      return !shift1Active;
-    } else {
-      // End game, hub always active.
-      return true;
+    final double EndOfTransition = 130;
+    final double EndOfShift1 = 105;
+    final double EndOfShift2 = 80;
+    final double EndOfShift3 = 55;
+    final double EndOfShift4 = 30;
+    final double Margin = 3;
+
+    if (shift1Active) {
+      if (matchTime > EndOfTransition) {
+        // Transition shift, hub is active.
+        return HUB_STATE.ACTIVE;
+
+      } else if (matchTime > EndOfShift1) {
+        // Shift 1
+        return HUB_STATE.ACTIVE;
+
+      } else if (matchTime > EndOfShift1 - Margin) {
+        // Shift 1 -> 2
+        return HUB_STATE.ABOUT_TO_BE_INACTIVE;
+      } else if (matchTime > EndOfShift2 + Margin) {
+        // Shift 2
+        return HUB_STATE.INACTIVE;
+      } else if (matchTime > EndOfShift2) {
+        // Shift 2 -> 3
+        return HUB_STATE.ABOUT_TO_BE_ACTIVE;
+
+      } else if (matchTime > EndOfShift3) {
+        // Shift 3
+        return HUB_STATE.ACTIVE;
+
+      } else if (matchTime > EndOfShift3 - Margin) {
+        // Shift 3 -> 4
+        return HUB_STATE.ABOUT_TO_BE_INACTIVE;
+      } else if (matchTime > EndOfShift4 + Margin) {
+        // Shift 4
+        return HUB_STATE.INACTIVE;
+      } else if (matchTime > EndOfShift4) {
+        // Shift 4 -> end game
+        return HUB_STATE.ABOUT_TO_BE_ACTIVE;
+
+      } else {
+        // End game, hub always active.
+        return HUB_STATE.ACTIVE;
+      }
+    }
+    else {
+      if (matchTime > EndOfTransition) {
+        // Transition shift, hub is active.
+        return HUB_STATE.ACTIVE;
+        
+      } else if (matchTime > EndOfTransition - Margin) {
+        // Transition Shift -> Shift 1
+        return HUB_STATE.ABOUT_TO_BE_INACTIVE;
+      } else if (matchTime > EndOfShift1 + Margin) {
+        // Shift 1
+        return HUB_STATE.INACTIVE;
+      } else if (matchTime > EndOfShift1) {
+        // Shift 1 -> 2
+        return HUB_STATE.ABOUT_TO_BE_ACTIVE;
+
+      } else if (matchTime > EndOfShift2) {
+        // Shift 2
+        return HUB_STATE.ACTIVE;
+
+      } else if (matchTime > EndOfShift2 - Margin) {
+        // Shift 2 -> 3
+        return HUB_STATE.ABOUT_TO_BE_INACTIVE;
+      } else if (matchTime > EndOfShift3 + Margin) {
+        // Shift 3
+        return HUB_STATE.INACTIVE;
+      } else if (matchTime > EndOfShift3) {
+        // Shift 3 -> 4
+        return HUB_STATE.ABOUT_TO_BE_ACTIVE;
+
+      } else if (matchTime > EndOfShift4) {
+        // Shift 4
+        return HUB_STATE.ACTIVE;
+
+      } else {
+        // End game, hub always active.
+        return HUB_STATE.ACTIVE;
+      }
     }
   }
 }
