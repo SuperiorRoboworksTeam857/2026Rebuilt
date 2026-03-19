@@ -158,7 +158,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("extendIntake", extendIntake);
         NamedCommands.registerCommand("retractIntake", retractIntake);
         NamedCommands.registerCommand("agitateIntake",
-                new SequentialCommandGroup(retractIntake, extendIntake, retractIntake, extendIntake));
+                new SequentialCommandGroup(retractIntake, extendIntake));
 
         Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
         Command driveRobotOrientedAngularVelocity = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add
