@@ -9,15 +9,41 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "center to tower"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "right trench to neutral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "neutral to right outpost"
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "extendIntake"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "extendIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "startIntake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -36,7 +62,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "startShooterForFiveSeconds"
+                  "name": "startShooterForTenSeconds"
                 }
               },
               {
@@ -47,6 +73,18 @@
                       "type": "named",
                       "data": {
                         "name": "startIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "agitateIntake"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 4.0
                       }
                     },
                     {

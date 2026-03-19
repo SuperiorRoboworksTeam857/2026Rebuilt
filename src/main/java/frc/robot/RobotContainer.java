@@ -123,6 +123,10 @@ public class RobotContainer {
                 new SequentialCommandGroup(
                         new RunCommand(
                                 () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(5)));
+        NamedCommands.registerCommand("startShooterForTenSeconds",
+                new SequentialCommandGroup(
+                        new RunCommand(
+                                () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(10)));
 
         NamedCommands.registerCommand("stopSpindexer",
                 new InstantCommand(
@@ -140,14 +144,21 @@ public class RobotContainer {
                                 () -> m_feeder.stopFeeder(), m_feeder),
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
-        NamedCommands.registerCommand("extendIntake",
+
+
+        Command extendIntake =
                 new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(2)
                         .until(m_intake::isIntakeExtended)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake)));
-        NamedCommands.registerCommand("retractIntake",
-                new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(2)
+                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+        Command retractIntake =
+                 new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(2)
                         .until(m_intake::isIntakeRetracted)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake)));
+                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+
+        NamedCommands.registerCommand("extendIntake", extendIntake);
+        NamedCommands.registerCommand("retractIntake", retractIntake);
+        NamedCommands.registerCommand("agitateIntake",
+                new SequentialCommandGroup(retractIntake, extendIntake, retractIntake, extendIntake));
 
         Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
         Command driveRobotOrientedAngularVelocity = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add
@@ -213,6 +224,8 @@ public class RobotContainer {
             return new PathPlannerAuto("Center Auto");
         } else if (buttonBox.getRawButton(5)) {
             return new PathPlannerAuto("Right Trench Auto");
+        } else if (buttonBox.getRawButton(6)) {
+            return new PathPlannerAuto("Right Trench + Outpost Auto");
         }
 
         // An example command will be run in autonomous
