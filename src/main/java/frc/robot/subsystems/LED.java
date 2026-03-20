@@ -19,23 +19,8 @@ public class LED extends SubsystemBase {
   Spark ledStrip = new Spark(0);
 
   // LED Strip Lights:
-  // Default Status: Solid Blue (0.83)
-  // Coral in Intake: Blinking Yellow (-0.07) - Need to be green maybe - use
-  // screwdriver with dial
-  // Turn to Reef Mode: Solid Violet (0.91)
-  // Not Within Tolerance: Blinking Red (-0.11)
-
-//   private final Intake s_Intake;
-//   private final Limelight s_Limelight;
-//   private final BooleanSupplier isAligningToReef;
 
   // https://1166281274-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2F-ME3KPEhFI6-MDoP9nZD%2Fuploads%2FMOYJvZmWgxCVKJhcV5fn%2FREV-11-1105-LED-Patterns.pdf?alt=media&token=e8227890-6dd3-498d-834a-752fa43413fe
-
-  // Change these variables to reflect the values
-  public static final double BLUE_LIGHTS = 0.83;
-  public static final double STROBE_GREEN = 0.35;
-  public static final double VIOLET_LIGHTS = 0.91;
-  public static final double STROBE_RED = -0.11;
 
   public static final double GREEN = 0.77;
   public static final double YELLOW = 0.69;
