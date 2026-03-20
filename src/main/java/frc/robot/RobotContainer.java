@@ -9,6 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.LimelightRead;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
@@ -77,6 +78,7 @@ public class RobotContainer {
     private final Feeder m_feeder = new Feeder();
     private final Shooter m_shooter = new Shooter(m_swerve);
     private final Limelight s_Limelight = new Limelight();
+    private final LED s_LED = new LED();
 
     private final JoystickButton highSpeed = new JoystickButton(driverStick, 1);
     private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
