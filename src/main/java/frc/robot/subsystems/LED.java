@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LED extends SubsystemBase {
-  Spark ledStrip = new Spark(2);
+  Spark ledStrip = new Spark(0);
 
   // LED Strip Lights:
   // Default Status: Solid Blue (0.83)
