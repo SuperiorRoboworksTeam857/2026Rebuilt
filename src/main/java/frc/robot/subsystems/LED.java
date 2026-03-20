@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -38,70 +37,47 @@ public class LED extends SubsystemBase {
   public static final double VIOLET_LIGHTS = 0.91;
   public static final double STROBE_RED = -0.11;
 
-  // Any subsystems being passed in should have data inside of it
-  // For example, s_Intake.isCoralInIntake().
-  public LED() {
-    // setup each of the subsystems necessary
-    // this.s_Intake = intake;
-    // this.isAligningToReef = aligningToReef;
-    // this.s_Limelight = limelight;
-  }
+  public static final double GREEN = 0.77;
+  public static final double YELLOW = 0.69;
+  public static final double RED = 0.61;
+  public static final double WHITE = 0.93;
+
+  public LED() {}
 
   @Override
   public void periodic() {
+    double lightPattern = 0.01;
+
     String hubActiveColor = "#FFFFFF";
     HUB_STATE state = isHubActive();
     switch (state) {
       case ACTIVE:
         hubActiveColor = "#4CAF50";
+        lightPattern = GREEN;
         break;
       case INACTIVE:
         hubActiveColor = "#F44336";
+        lightPattern = RED;
         break;
       case ABOUT_TO_BE_ACTIVE:
-        hubActiveColor = "#000099";
+        hubActiveColor = "#FFFFFF";
+        lightPattern = WHITE;
         break;
       case ABOUT_TO_BE_INACTIVE:
         hubActiveColor = "#CCCC00";
+        lightPattern = YELLOW;
         break;
     }
 
     SmartDashboard.putString("Hub Active", hubActiveColor);
     SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
-
-    double lightPattern = 0.01;
-
-    // SmartDashboard.putBoolean("LED - isReefAprilTagValid", s_Limelight.getIsReefAprilTagValid());
-
-    // You need to add additional if statements below for each LED color
-    // if (isAligningToReef.getAsBoolean()) {
-    //   if (s_Limelight.getIsReefAprilTagValid()) {
-    //     SmartDashboard.putString("LED - color", "Solid Violet");
-    //     lightPattern = VIOLET_LIGHTS;
-    //   } else {
-    //     SmartDashboard.putString("LED - color", "Strobe Red");
-    //     lightPattern = STROBE_RED;
-    //   }
-    // } else if (s_Intake.isCoralInIntake()) {
-    //   SmartDashboard.putString("LED - color", "Strobe Green");
-    //   lightPattern = STROBE_GREEN;
-    // } else {
-    //   SmartDashboard.putString("LED - color", "Solid Blue");
-    //   lightPattern = BLUE_LIGHTS;
-    // }
-
-    ledStrip.set(lightPattern);
-
-    
+    ledStrip.set(lightPattern); 
   }
 
   public Spark getLEDController() {
     return ledStrip;
   }
-
-
-
 
   public enum HUB_STATE {
     INACTIVE,
@@ -232,5 +208,4 @@ public class LED extends SubsystemBase {
       }
     }
   }
-
 }
