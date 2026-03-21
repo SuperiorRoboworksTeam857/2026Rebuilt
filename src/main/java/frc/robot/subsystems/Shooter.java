@@ -69,6 +69,16 @@ public class Shooter extends SubsystemBase {
     SHOOTER_MAP.put(4.5, 3600.0);
     SHOOTER_MAP.put(5.0, 3800.0);
     SHOOTER_MAP.put(5.5, 4000.0);
+    SHOOTER_MAP.put(6.0, 4200.0);
+    SHOOTER_MAP.put(6.5, 4400.0);
+    SHOOTER_MAP.put(7.0, 4600.0);
+    SHOOTER_MAP.put(7.5, 4800.0);
+    SHOOTER_MAP.put(8.0, 5000.0);
+    SHOOTER_MAP.put(8.5, 5200.0);
+    SHOOTER_MAP.put(9.0, 5400.0);
+    SHOOTER_MAP.put(9.5, 5600.0);
+    SHOOTER_MAP.put(10.0, 5800.0);
+    SHOOTER_MAP.put(10.5, 6000.0);
   }
 
   public Shooter(SwerveSubsystem swerve) {
