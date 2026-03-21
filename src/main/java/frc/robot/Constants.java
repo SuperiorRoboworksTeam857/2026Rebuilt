@@ -28,10 +28,10 @@ public final class Constants {
   public static final double deltaTime = 0.02;
 
   public static class Swerve {
-    public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+    public static final double ROBOT_MASS = (105+10+13) * 0.453592; // 32lbs * kg per pound
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
     public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED  = Units.feetToMeters(10);
+    public static final double MAX_SPEED  = Units.feetToMeters(17);
   }
 
  public static final class AutonConstants {
@@ -87,17 +87,17 @@ public final class Constants {
                                                             Units.inchesToMeters(158.845),
                                                             Rotation2d.kZero);
 
-    public static final Pose2d blueDownCorner =  new Pose2d(Units.inchesToMeters(12),    // wall at 0
+    public static final Pose2d blueDownCorner =  new Pose2d(Units.inchesToMeters(12 + 48*2),    // wall at 0
                                                             Units.inchesToMeters(25.37), // wall at 0
                                                             Rotation2d.kZero);
-    public static final Pose2d blueUpCorner =    new Pose2d(Units.inchesToMeters(12),    // wall at 0
+    public static final Pose2d blueUpCorner =    new Pose2d(Units.inchesToMeters(12 + 48*2),    // wall at 0
                                                             Units.inchesToMeters(292.31),// wall at 318
                                                             Rotation2d.kZero);
 
-    public static final Pose2d redDownCorner =  new Pose2d(Units.inchesToMeters(638),    // wall at 650
+    public static final Pose2d redDownCorner =  new Pose2d(Units.inchesToMeters(638 - 48*2),    // wall at 650
                                                            Units.inchesToMeters(25.37),  // wall at 0
                                                            Rotation2d.kZero);
-    public static final Pose2d redUpCorner =    new Pose2d(Units.inchesToMeters(638),    // wall at 650
+    public static final Pose2d redUpCorner =    new Pose2d(Units.inchesToMeters(638 - 48*2),    // wall at 650
                                                            Units.inchesToMeters(292.31), // wall at 318
                                                            Rotation2d.kZero);
   }
