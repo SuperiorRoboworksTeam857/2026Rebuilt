@@ -62,7 +62,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "startShooterForFiveSeconds"
+                  "name": "startShooterForTenSeconds"
                 }
               },
               {
@@ -73,12 +73,6 @@
                       "type": "named",
                       "data": {
                         "name": "startIntake"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "agitateIntake"
                       }
                     },
                     {
