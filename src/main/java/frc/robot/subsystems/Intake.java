@@ -101,5 +101,14 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic(){
     SmartDashboard.putNumber("intakeExtensionActual", intakeExtensionMotor.getEncoder().getPosition());
+
+    // Set intake extension to use brake mode when retract, as otherwise whipping
+    // the robot around causes the intake to extend
+    if (isIntakeRetracted()) {
+      intakeExtensionConfig.idleMode(IdleMode.kBrake);
+    } else {
+      intakeExtensionConfig.idleMode(IdleMode.kCoast);
+    }
+    intakeExtensionMotor.configure(intakeExtensionConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 }
