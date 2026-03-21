@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -149,18 +150,19 @@ public class RobotContainer {
 
 
         Command extendIntake =
-                new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(2)
+                new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(1.1)
                         .until(m_intake::isIntakeExtended)
                         .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
         Command retractIntake =
-                 new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(2)
+                 new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(1.1)
                         .until(m_intake::isIntakeRetracted)
                         .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
 
         NamedCommands.registerCommand("extendIntake", extendIntake);
         NamedCommands.registerCommand("retractIntake", retractIntake);
         NamedCommands.registerCommand("agitateIntake",
-                new SequentialCommandGroup(retractIntake, extendIntake));
+                new RepeatCommand(new SequentialCommandGroup(retractIntake, extendIntake)));
+                
 
         Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
         Command driveRobotOrientedAngularVelocity = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add
