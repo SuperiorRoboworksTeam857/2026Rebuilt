@@ -70,9 +70,10 @@ public final class Constants {
     public static final double shooterKV = 0.0018;
 
     // Turret constants for the turret
-    public static final double turretKP = 2.5;
+    public static final double turretKP = 5.5;
     public static final double turretKI = 0;
-    public static final double turretKD = 0;
+    public static final double turretKD = 1.0;
+    public static final double turretKV = 1.0;
 
     // Convert turret motor angle to be the actual turret angle in rotations
     public static final double turretPositionFactor = (20.0 / 200.0) * (1.0 / 5.0); // 1/50
@@ -127,6 +128,8 @@ public final class Constants {
 
     public static final int intakeExtendPOV = 180;
     public static final int intakeRetractPOV = 0;
+
+    public static final int agitateIntakeButton = XboxController.Button.kA.value;
   }
 
   public static final class IntakeConstants {
