@@ -100,6 +100,7 @@ public class SwerveSubsystem extends SubsystemBase
     // Set AprilTag offset tracking point (meters)
     LimelightHelpers.setFiducial3DOffset("limelight", 0.0, 0.0, 0);
 
+    swerveDrive.stopOdometryThread();
 
     field = new Field2d();
     SmartDashboard.putData("Field", field);
