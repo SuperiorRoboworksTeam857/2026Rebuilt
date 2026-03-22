@@ -106,14 +106,11 @@ public class Shooter extends SubsystemBase {
     INVERSE_SHOOTER_SPEED_MAP.put(8.0 / 0.8, 8.0);
     INVERSE_SHOOTER_SPEED_MAP.put(9.0 / 0.8, 9.0);
     INVERSE_SHOOTER_SPEED_MAP.put(10.5 / 0.8, 10.5);
-    //INVERSE_SHOOTER_SPEED_MAP.put(4.0 / 1.25, 4.0);
   }
 
   public Shooter(SwerveSubsystem swerve) {
     this.s_swerve = swerve;
     
-    //SmartDashboard.putNumber("target shooter speed", 2600.0);
-
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
     // applying it to the configuration ALONE won't change the motor
@@ -195,8 +192,6 @@ public class Shooter extends SubsystemBase {
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly
 
 
-
-    // THIS ALL ASSUMES ROBOT IS BASICALLY STATIONARY
     boolean USE_SHOOT_ON_FLY = true;
     if (!USE_SHOOT_ON_FLY) {
       Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());
@@ -288,10 +283,6 @@ public class Shooter extends SubsystemBase {
 
     SmartDashboard.putBoolean("On Target", isShooterOnTarget());
     SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
-
-
-    // SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
-    // SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
 
     
   }
