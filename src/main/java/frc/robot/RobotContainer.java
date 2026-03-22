@@ -100,6 +100,9 @@ public class RobotContainer {
     private final POVButton intakeExtend = new POVButton(gamepad, Constants.ControllerConstants.intakeExtendPOV);
     private final POVButton intakeContract = new POVButton(gamepad, Constants.ControllerConstants.intakeRetractPOV);
 
+    private final JoystickButton agitateIntake = new JoystickButton(gamepad, Constants.ControllerConstants.agitateIntakeButton);
+
+
     public final AprilTagFieldLayout layout;
 
     /**
@@ -147,8 +150,6 @@ public class RobotContainer {
                                 () -> m_feeder.stopFeeder(), m_feeder),
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
-
-
         Command extendIntake =
                 new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(1.1)
                         .until(m_intake::isIntakeExtended)
@@ -210,6 +211,22 @@ public class RobotContainer {
 
         intakeExtend.whileTrue(new RunCommand(() -> m_intake.extendIntake(), m_intake));
         intakeContract.whileTrue(new RunCommand(() -> m_intake.retractIntake(), m_intake));
+
+        Command extendIntake =
+                new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(1.1)
+                        .until(m_intake::isIntakeExtended)
+                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+        Command retractIntake =
+                 new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(1.1)
+                        .until(m_intake::isIntakeRetracted)
+                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+
+        agitateIntake.whileTrue(
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> m_intake.startIntake(), m_intake),
+                        new RepeatCommand(new SequentialCommandGroup(retractIntake, extendIntake))
+                )
+        );
     }
 
     public void setMotorBrake(boolean brake) {
@@ -230,6 +247,8 @@ public class RobotContainer {
             return new PathPlannerAuto("Right Trench Auto");
         } else if (buttonBox.getRawButton(6)) {
             return new PathPlannerAuto("Right Trench + Outpost Auto");
+        } else if (buttonBox.getRawButton(7)) {
+            return new PathPlannerAuto("Center Auto + Depot");
         }
 
         // An example command will be run in autonomous
