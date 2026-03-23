@@ -59,7 +59,7 @@ public class Shooter extends SubsystemBase {
 
   // Example LUT (distance in meters, shooter RPM)
   private static final double minimumShootingDistance = 2.0;
-  private static final double maximumDistanceForCafeteria = 4.0;
+  //private static final double maximumDistanceForCafeteria = 4.0;
   private static final InterpolatingDoubleTreeMap SHOOTER_RPM_MAP = new InterpolatingDoubleTreeMap();
   static {
     SHOOTER_RPM_MAP.put(2.0, 2600.0);
@@ -211,7 +211,7 @@ public class Shooter extends SubsystemBase {
 
       // Calculate shooter speed from distance to target using lookup table
       double distanceToGoal = shootDirection.getNorm();
-      if (distanceToGoal >= minimumShootingDistance && distanceToGoal <= maximumDistanceForCafeteria) {
+      if (distanceToGoal >= minimumShootingDistance /*&& distanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(distanceToGoal);
       }
       else { // if too close, don't try to run shooter
@@ -219,7 +219,7 @@ public class Shooter extends SubsystemBase {
       }
 
       SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
-      SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
+      //SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
     } else {
       ChassisSpeeds robotSpeed = s_swerve.getFieldVelocity();
       Translation2d robotVelVec = new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
@@ -246,7 +246,7 @@ public class Shooter extends SubsystemBase {
       double effectiveDistanceToGoal = INVERSE_SHOOTER_SPEED_MAP.get(newHorizontalSpeed_mps);
       
       // Calculate shooter speed from distance to target using lookup table
-      if (effectiveDistanceToGoal >= minimumShootingDistance && effectiveDistanceToGoal <= maximumDistanceForCafeteria) {
+      if (effectiveDistanceToGoal >= minimumShootingDistance /*&& effectiveDistanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(effectiveDistanceToGoal);
       }
       else { // if too close, don't try to run shooter
@@ -267,37 +267,33 @@ public class Shooter extends SubsystemBase {
       }
 
       SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
-      SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
+      //SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
     }
-
 
 
     SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("turret goal", shootRotationInRobotCoords.getRotations());
 
-
-    // put both of these numbers on the smartdashboard
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
 
-
     SmartDashboard.putBoolean("On Target", isShooterOnTarget());
-    SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
-
-    
+    SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());   
   }
+
   public boolean isShooterAtSpeed() {
     return Math.abs(shooterMotor1.getEncoder().getVelocity() - targetShooterSpeed) < 500
            && targetShooterSpeed > 500;
   }
+
   public boolean isShooterOnTarget() {
     double turretError = turretMotor.getEncoder().getPosition() - shootRotationInRobotCoords.getRotations();
     SmartDashboard.putNumber("turret error", turretError);
 
     return Math.abs(turretError) < 0.02;
-
-    // typical error seems to be 0.004 or 0.007 rotations
+    // typical error seems to be 0.004 or 0.007 rotations standstill
   }
+
   public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
     powerShooter(targetShooterSpeed);
     if (isShooterAtSpeed() && isShooterOnTarget()){
