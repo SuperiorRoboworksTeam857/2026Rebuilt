@@ -119,6 +119,9 @@ public class RobotContainer {
         s_Limelight.enableLimelight(false);
         s_Limelight.setPipeline(Limelight.Pipeline.AprilTags);
 
+
+        NamedCommands.registerCommand("driveForwardOneSecond", m_swerve.driveForward().withTimeout(1));
+
         NamedCommands.registerCommand("startSpindexer",
                 new InstantCommand(
                         () -> m_spindexer.startSpindexer(), m_spindexer));

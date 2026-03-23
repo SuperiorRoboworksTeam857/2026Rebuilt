@@ -23,6 +23,12 @@
                       "data": {
                         "pathName": "neutral to right outpost"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "driveForwardOneSecond"
+                      }
                     }
                   ]
                 }
