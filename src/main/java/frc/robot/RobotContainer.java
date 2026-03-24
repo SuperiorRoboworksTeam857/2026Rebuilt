@@ -49,6 +49,7 @@ public class RobotContainer {
     private final double SLOW_SPEED = 0.3;
 
     private double driveSpeedScaling = NORMAL_SPEED;
+    private boolean robotCentricDriving = false;
 
 
     /* Controllers */
@@ -68,11 +69,8 @@ public class RobotContainer {
             () -> driverStick.getX() * -1 * driveSpeedScaling)
             .withControllerRotationAxis(() -> driverStick.getZ() * -1 * driveSpeedScaling)
             .deadband(OperatorConstants.DEADBAND)
-            .allianceRelativeControl(true);
-
-    SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-            .allianceRelativeControl(false);
-    
+            .allianceRelativeControl(() -> !robotCentricDriving)
+            .robotRelative(() -> robotCentricDriving);
 
     private final Intake m_intake = new Intake();
     private final Spindexer m_spindexer = new Spindexer();
@@ -169,9 +167,7 @@ public class RobotContainer {
                 
 
         Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
-        Command driveRobotOrientedAngularVelocity = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add
-                                                                                                     // control to flip
-                                                                                                     // to robot centric
+
         m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
         m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntakeAndExtension(), m_intake));
@@ -195,6 +191,9 @@ public class RobotContainer {
                  .onFalse(new InstantCommand(() -> driveSpeedScaling = NORMAL_SPEED));
         highSpeed.whileTrue(new InstantCommand(() -> driveSpeedScaling = FULL_SPEED))
                  .onFalse(new InstantCommand(() -> driveSpeedScaling = NORMAL_SPEED));
+
+        robotCentric.whileTrue(new InstantCommand(() -> robotCentricDriving = true))
+                    .onFalse(new InstantCommand(() -> robotCentricDriving = false));
 
         // SHOOTER CONTROLS
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
