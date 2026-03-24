@@ -23,6 +23,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -109,9 +110,8 @@ public class RobotContainer {
     public RobotContainer() {
         layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-        // // Start camera streams for both webcams
-        // CameraServer.startAutomaticCapture();
-        // CameraServer.startAutomaticCapture();
+        // Start camera stream for webcam
+        CameraServer.startAutomaticCapture();
 
         s_Limelight.turnOnDriverCam();
         s_Limelight.enableLimelight(false);
