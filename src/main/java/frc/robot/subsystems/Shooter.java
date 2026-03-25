@@ -67,19 +67,20 @@ public class Shooter extends SubsystemBase {
     SHOOTER_RPM_MAP.put(3.0, 3000.0);
     SHOOTER_RPM_MAP.put(3.5, 3200.0);
     SHOOTER_RPM_MAP.put(4.0, 3400.0);
-    SHOOTER_RPM_MAP.put(4.5, 3600.0);
-    SHOOTER_RPM_MAP.put(5.0, 3800.0);
-    SHOOTER_RPM_MAP.put(5.5, 4000.0);
-    SHOOTER_RPM_MAP.put(6.0, 4200.0);
-    SHOOTER_RPM_MAP.put(6.5, 4400.0);
-    SHOOTER_RPM_MAP.put(7.0, 4600.0);
-    SHOOTER_RPM_MAP.put(7.5, 4800.0);
-    SHOOTER_RPM_MAP.put(8.0, 5000.0);
-    SHOOTER_RPM_MAP.put(8.5, 5200.0);
-    SHOOTER_RPM_MAP.put(9.0, 5400.0);
-    SHOOTER_RPM_MAP.put(9.5, 5600.0);
-    SHOOTER_RPM_MAP.put(10.0, 5800.0);
-    SHOOTER_RPM_MAP.put(10.5, 6000.0);
+    SHOOTER_RPM_MAP.put(5.0, 4000.0);
+    // SHOOTER_RPM_MAP.put(4.5, 3600.0);
+    // SHOOTER_RPM_MAP.put(5.0, 3800.0);
+    // SHOOTER_RPM_MAP.put(5.5, 4000.0);
+    // SHOOTER_RPM_MAP.put(6.0, 4200.0);
+    // SHOOTER_RPM_MAP.put(6.5, 4400.0);
+    // SHOOTER_RPM_MAP.put(7.0, 4600.0);
+    // SHOOTER_RPM_MAP.put(7.5, 4800.0);
+    // SHOOTER_RPM_MAP.put(8.0, 5000.0);
+    // SHOOTER_RPM_MAP.put(8.5, 5200.0);
+    // SHOOTER_RPM_MAP.put(9.0, 5400.0);
+    // SHOOTER_RPM_MAP.put(9.5, 5600.0);
+    // SHOOTER_RPM_MAP.put(10.0, 5800.0);
+    SHOOTER_RPM_MAP.put(10.5, 6600.0);
   }
 
   private static final InterpolatingDoubleTreeMap SHOOTER_TOF_MAP = new InterpolatingDoubleTreeMap();
@@ -89,7 +90,7 @@ public class Shooter extends SubsystemBase {
     SHOOTER_TOF_MAP.put(3.0, 1.0);
     SHOOTER_TOF_MAP.put(3.5, 0.8);
     SHOOTER_TOF_MAP.put(4.0, 0.8);
-    SHOOTER_TOF_MAP.put(10.5, 0.8); // who knows?
+    SHOOTER_TOF_MAP.put(10.5, 1.5); // who knows?
   }
   // m/s -> distance
   private static final InterpolatingDoubleTreeMap INVERSE_SHOOTER_SPEED_MAP = new InterpolatingDoubleTreeMap();
@@ -100,12 +101,12 @@ public class Shooter extends SubsystemBase {
     INVERSE_SHOOTER_SPEED_MAP.put(3.5 / 0.8, 3.5);
     INVERSE_SHOOTER_SPEED_MAP.put(4.0 / 0.8, 4.0);
     
-    INVERSE_SHOOTER_SPEED_MAP.put(5.0 / 0.8, 5.0);
-    INVERSE_SHOOTER_SPEED_MAP.put(6.0 / 0.8, 6.0);
-    INVERSE_SHOOTER_SPEED_MAP.put(7.0 / 0.8, 7.0);
-    INVERSE_SHOOTER_SPEED_MAP.put(8.0 / 0.8, 8.0);
-    INVERSE_SHOOTER_SPEED_MAP.put(9.0 / 0.8, 9.0);
-    INVERSE_SHOOTER_SPEED_MAP.put(10.5 / 0.8, 10.5);
+    // INVERSE_SHOOTER_SPEED_MAP.put(5.0 / 0.8, 5.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(6.0 / 0.8, 6.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(7.0 / 0.8, 7.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(8.0 / 0.8, 8.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(9.0 / 0.8, 9.0);
+    INVERSE_SHOOTER_SPEED_MAP.put(10.5 / 1.5, 10.5);
   }
 
   public Shooter(SwerveSubsystem swerve) {
