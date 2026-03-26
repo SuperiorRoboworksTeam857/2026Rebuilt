@@ -77,7 +77,7 @@ public final class Constants {
 
     // Convert turret motor angle to be the actual turret angle in rotations
     public static final double turretPositionFactor = (20.0 / 200.0) * (1.0 / 5.0); // 1/50
-    public static final double turretMinLimit = -0.45; // -0.45
+    public static final double turretMinLimit = -0.4; // -0.45
     public static final double turretMaxLimit = 0.4; // 0.4
 
 
