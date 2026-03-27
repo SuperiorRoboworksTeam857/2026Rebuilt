@@ -9,6 +9,7 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.LimelightRead;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeExtension;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
@@ -74,6 +75,7 @@ public class RobotContainer {
             .robotRelative(() -> robotCentricDriving);
 
     private final Intake m_intake = new Intake();
+    private final IntakeExtension m_intakeExtension = new IntakeExtension();
     private final Spindexer m_spindexer = new Spindexer();
     private final Feeder m_feeder = new Feeder();
     private final Shooter m_shooter = new Shooter(m_swerve);
@@ -152,13 +154,13 @@ public class RobotContainer {
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
         Command extendIntake =
-                new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(1.1)
-                        .until(m_intake::isIntakeExtended)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(1.1)
+                        .until(m_intakeExtension::isIntakeExtended)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         Command retractIntake =
-                 new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(1.1)
-                        .until(m_intake::isIntakeRetracted)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(1.1)
+                        .until(m_intakeExtension::isIntakeRetracted)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
 
         NamedCommands.registerCommand("extendIntake", extendIntake);
         NamedCommands.registerCommand("retractIntake", retractIntake);
@@ -170,7 +172,8 @@ public class RobotContainer {
 
         m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntakeAndExtension(), m_intake));
+        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntake(), m_intake));
+        m_intakeExtension.setDefaultCommand(new RunCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         m_spindexer.setDefaultCommand(new RunCommand(() -> m_spindexer.stopSpindexer(), m_spindexer));
         m_feeder.setDefaultCommand(new RunCommand(() -> m_feeder.stopFeeder(), m_feeder));
         m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.stopShooter(), m_shooter));
@@ -211,17 +214,17 @@ public class RobotContainer {
         intakeIn.whileTrue(new RunCommand(() -> m_intake.startIntake(), m_intake));
         intakeOut.whileTrue(new RunCommand(() -> m_intake.reverseIntake(), m_intake));
 
-        intakeExtend.whileTrue(new RunCommand(() -> m_intake.extendIntake(), m_intake));
-        intakeContract.whileTrue(new RunCommand(() -> m_intake.retractIntake(), m_intake));
+        intakeExtend.whileTrue(new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension));
+        intakeContract.whileTrue(new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension));
 
         Command extendIntake =
-                new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(1.1)
-                        .until(m_intake::isIntakeExtended)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(1.1)
+                        .until(m_intakeExtension::isIntakeExtended)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         Command retractIntake =
-                 new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(1.1)
-                        .until(m_intake::isIntakeRetracted)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake));
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(1.1)
+                        .until(m_intakeExtension::isIntakeRetracted)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
 
         agitateIntake.whileTrue(
                 new SequentialCommandGroup(
