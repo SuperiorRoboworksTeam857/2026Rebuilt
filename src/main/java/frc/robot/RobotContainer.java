@@ -136,6 +136,11 @@ public class RobotContainer {
                 new SequentialCommandGroup(
                         new RunCommand(
                                 () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(10)));
+        NamedCommands.registerCommand("startShooterForFifteenSeconds",
+                new SequentialCommandGroup(
+                        new RunCommand(
+                                () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(15)));
+
 
         NamedCommands.registerCommand("stopSpindexer",
                 new InstantCommand(
