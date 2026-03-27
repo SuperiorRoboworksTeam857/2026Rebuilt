@@ -154,11 +154,11 @@ public class RobotContainer {
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
         Command extendIntake =
-                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(1.1)
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(0.8)
                         .until(m_intakeExtension::isIntakeExtended)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         Command retractIntake =
-                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(1.1)
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(0.8)
                         .until(m_intakeExtension::isIntakeRetracted)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
 
@@ -218,11 +218,11 @@ public class RobotContainer {
         intakeContract.whileTrue(new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension));
 
         Command extendIntake =
-                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(1.1)
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(0.8)
                         .until(m_intakeExtension::isIntakeExtended)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         Command retractIntake =
-                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(1.1)
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(0.8)
                         .until(m_intakeExtension::isIntakeRetracted)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
 
