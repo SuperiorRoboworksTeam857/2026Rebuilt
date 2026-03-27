@@ -45,7 +45,7 @@ public class IntakeExtension extends SubsystemBase {
     double currentPos = intakeExtensionMotor.getEncoder().getPosition();
 
     if (currentPos < Constants.IntakeConstants.intakeExtendedPosition) {
-      speed = 0.2;
+      speed = 0.15;
     } else {
       speed = 0;
     }
@@ -57,7 +57,7 @@ public class IntakeExtension extends SubsystemBase {
     double currentPos = intakeExtensionMotor.getEncoder().getPosition();
 
     if (currentPos > Constants.IntakeConstants.intakeContractedPosition) {
-      speed = -0.2;
+      speed = -0.15;
     } else {
       speed = 0;
     }
