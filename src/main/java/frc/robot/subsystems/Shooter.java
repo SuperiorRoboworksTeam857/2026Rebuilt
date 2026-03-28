@@ -62,12 +62,12 @@ public class Shooter extends SubsystemBase {
   //private static final double maximumDistanceForCafeteria = 4.0;
   private static final InterpolatingDoubleTreeMap SHOOTER_RPM_MAP = new InterpolatingDoubleTreeMap();
   static {
-    SHOOTER_RPM_MAP.put(2.0, 2600.0);
-    SHOOTER_RPM_MAP.put(2.5, 2800.0);
-    SHOOTER_RPM_MAP.put(3.0, 3000.0);
-    SHOOTER_RPM_MAP.put(3.5, 3200.0);
-    SHOOTER_RPM_MAP.put(4.0, 3400.0);
-    SHOOTER_RPM_MAP.put(5.0, 4000.0);
+    SHOOTER_RPM_MAP.put(2.0, 2650.0);
+    SHOOTER_RPM_MAP.put(2.5, 2850.0);
+    SHOOTER_RPM_MAP.put(3.0, 3050.0);
+    SHOOTER_RPM_MAP.put(3.5, 3250.0);
+    SHOOTER_RPM_MAP.put(4.0, 3450.0);
+    SHOOTER_RPM_MAP.put(5.0, 4050.0);
     // SHOOTER_RPM_MAP.put(4.5, 3600.0);
     // SHOOTER_RPM_MAP.put(5.0, 3800.0);
     // SHOOTER_RPM_MAP.put(5.5, 4000.0);
@@ -100,7 +100,7 @@ public class Shooter extends SubsystemBase {
     INVERSE_SHOOTER_SPEED_MAP.put(3.0 / 1.0, 3.0);
     INVERSE_SHOOTER_SPEED_MAP.put(3.5 / 0.8, 3.5);
     INVERSE_SHOOTER_SPEED_MAP.put(4.0 / 0.8, 4.0);
-    
+ 
     // INVERSE_SHOOTER_SPEED_MAP.put(5.0 / 0.8, 5.0);
     // INVERSE_SHOOTER_SPEED_MAP.put(6.0 / 0.8, 6.0);
     // INVERSE_SHOOTER_SPEED_MAP.put(7.0 / 0.8, 7.0);
@@ -111,7 +111,7 @@ public class Shooter extends SubsystemBase {
 
   public Shooter(SwerveSubsystem swerve) {
     this.s_swerve = swerve;
-    
+ 
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
     // applying it to the configuration ALONE won't change the motor
@@ -131,7 +131,7 @@ public class Shooter extends SubsystemBase {
     turretMotorConfig.encoder
       .positionConversionFactor(Constants.ShooterConstants.turretPositionFactor);
     turretMotorConfig.smartCurrentLimit(30);
-    
+ 
     shooterMotorConfig2.inverted(true);
 
     shooterMotorConfig1.idleMode(IdleMode.kCoast);
@@ -153,7 +153,7 @@ public class Shooter extends SubsystemBase {
                      Constants.ShooterConstants.turretMinLimit,
                      Constants.ShooterConstants.turretMaxLimit);
     turretMotorController.setSetpoint(position, ControlType.kPosition);
-    
+ 
   }
 
   public void setShooterVelocity(double velocity){
@@ -192,10 +192,14 @@ public class Shooter extends SubsystemBase {
     // this is to get the SOTF
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly
 
+    Translation2d shooterOffsetOnRobot = new Translation2d(Units.inchesToMeters(-4.5), Units.inchesToMeters(-4.5));
+    Translation2d locationOfShooter = shooterOffsetOnRobot.rotateBy(robotPose.getRotation())
+                                      .plus(robotPose.getTranslation());
+    s_swerve.field.getObject("shooter").setPose(new Pose2d(locationOfShooter, Rotation2d.kZero));
 
     boolean USE_SHOOT_ON_FLY = true;
     if (!USE_SHOOT_ON_FLY) {
-      Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());
+      Translation2d shootDirection = shooterTargetPose.getTranslation().minus(locationOfShooter);
       Rotation2d shootRotationInFieldCoords = shootDirection.getAngle();
       Rotation2d robotRotationInFieldCoords = robotPose.getRotation();
       shootRotationInRobotCoords = shootRotationInFieldCoords
@@ -227,7 +231,7 @@ public class Shooter extends SubsystemBase {
 
       // 1. LATENCY COMP
       double latency = 0.15; // s, Tuned constant
-      Translation2d futurePos = robotPose.getTranslation().plus( robotVelVec.times(latency) );
+      Translation2d futurePos = locationOfShooter.plus( robotVelVec.times(latency) );
 
       // 2. GET TARGET VECTOR
       Translation2d goalLocation = shooterTargetPose.getTranslation();
@@ -245,7 +249,7 @@ public class Shooter extends SubsystemBase {
       double newHorizontalSpeed_mps = shotVec.getNorm();
 
       double effectiveDistanceToGoal = INVERSE_SHOOTER_SPEED_MAP.get(newHorizontalSpeed_mps);
-      
+ 
       // Calculate shooter speed from distance to target using lookup table
       if (effectiveDistanceToGoal >= minimumShootingDistance /*&& effectiveDistanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(effectiveDistanceToGoal);
@@ -279,7 +283,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
 
     SmartDashboard.putBoolean("On Target", isShooterOnTarget());
-    SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());   
+    SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
   }
 
   public boolean isShooterAtSpeed() {
