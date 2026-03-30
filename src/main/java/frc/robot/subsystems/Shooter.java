@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.Optional;
-
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -19,6 +17,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -60,24 +59,59 @@ public class Shooter extends SubsystemBase {
 
   // Example LUT (distance in meters, shooter RPM)
   private static final double minimumShootingDistance = 2.0;
-  private static final double maximumDistanceForCafeteria = 4.0;
-  private static final InterpolatingDoubleTreeMap SHOOTER_MAP = new InterpolatingDoubleTreeMap();
+  //private static final double maximumDistanceForCafeteria = 4.0;
+  private static final InterpolatingDoubleTreeMap SHOOTER_RPM_MAP = new InterpolatingDoubleTreeMap();
   static {
-    SHOOTER_MAP.put(2.0, 2600.0);
-    SHOOTER_MAP.put(2.5, 2800.0);
-    SHOOTER_MAP.put(3.0, 3000.0);
-    SHOOTER_MAP.put(3.5, 3200.0);
-    SHOOTER_MAP.put(4.0, 3400.0);
-    SHOOTER_MAP.put(4.5, 3600.0);
-    SHOOTER_MAP.put(5.0, 3800.0);
-    SHOOTER_MAP.put(5.5, 4000.0);
+    SHOOTER_RPM_MAP.put(2.0, 2650.0);
+    SHOOTER_RPM_MAP.put(2.5, 2850.0);
+    SHOOTER_RPM_MAP.put(3.0, 3050.0);
+    SHOOTER_RPM_MAP.put(3.5, 3250.0);
+    SHOOTER_RPM_MAP.put(4.0, 3450.0);
+    SHOOTER_RPM_MAP.put(5.0, 4050.0);
+    // SHOOTER_RPM_MAP.put(4.5, 3600.0);
+    // SHOOTER_RPM_MAP.put(5.0, 3800.0);
+    // SHOOTER_RPM_MAP.put(5.5, 4000.0);
+    // SHOOTER_RPM_MAP.put(6.0, 4200.0);
+    // SHOOTER_RPM_MAP.put(6.5, 4400.0);
+    // SHOOTER_RPM_MAP.put(7.0, 4600.0);
+    // SHOOTER_RPM_MAP.put(7.5, 4800.0);
+    // SHOOTER_RPM_MAP.put(8.0, 5000.0);
+    // SHOOTER_RPM_MAP.put(8.5, 5200.0);
+    // SHOOTER_RPM_MAP.put(9.0, 5400.0);
+    // SHOOTER_RPM_MAP.put(9.5, 5600.0);
+    // SHOOTER_RPM_MAP.put(10.0, 5800.0);
+    SHOOTER_RPM_MAP.put(10.5, 6600.0);
+  }
+
+  private static final InterpolatingDoubleTreeMap SHOOTER_TOF_MAP = new InterpolatingDoubleTreeMap();
+  static {
+    SHOOTER_TOF_MAP.put(2.0, 1.0);
+    SHOOTER_TOF_MAP.put(2.5, 1.0);
+    SHOOTER_TOF_MAP.put(3.0, 1.0);
+    SHOOTER_TOF_MAP.put(3.5, 0.8);
+    SHOOTER_TOF_MAP.put(4.0, 0.8);
+    SHOOTER_TOF_MAP.put(10.5, 1.5); // who knows?
+  }
+  // m/s -> distance
+  private static final InterpolatingDoubleTreeMap INVERSE_SHOOTER_SPEED_MAP = new InterpolatingDoubleTreeMap();
+  static {
+    INVERSE_SHOOTER_SPEED_MAP.put(2.0 / 1.0, 2.0);
+    INVERSE_SHOOTER_SPEED_MAP.put(2.5 / 1.0, 2.5);
+    INVERSE_SHOOTER_SPEED_MAP.put(3.0 / 1.0, 3.0);
+    INVERSE_SHOOTER_SPEED_MAP.put(3.5 / 0.8, 3.5);
+    INVERSE_SHOOTER_SPEED_MAP.put(4.0 / 0.8, 4.0);
+ 
+    // INVERSE_SHOOTER_SPEED_MAP.put(5.0 / 0.8, 5.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(6.0 / 0.8, 6.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(7.0 / 0.8, 7.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(8.0 / 0.8, 8.0);
+    // INVERSE_SHOOTER_SPEED_MAP.put(9.0 / 0.8, 9.0);
+    INVERSE_SHOOTER_SPEED_MAP.put(10.5 / 1.5, 10.5);
   }
 
   public Shooter(SwerveSubsystem swerve) {
     this.s_swerve = swerve;
-    
-    //SmartDashboard.putNumber("target shooter speed", 2600.0);
-
+ 
     // setup PID parameters
     // this takes in the PID parameters from constants and applies it to the config
     // applying it to the configuration ALONE won't change the motor
@@ -92,11 +126,12 @@ public class Shooter extends SubsystemBase {
     turretMotorConfig.closedLoop
       .p(Constants.ShooterConstants.turretKP)
       .i(Constants.ShooterConstants.turretKI)
-      .d(Constants.ShooterConstants.turretKD);
+      .d(Constants.ShooterConstants.turretKD)
+      .feedForward.kV(Constants.ShooterConstants.turretKV);
     turretMotorConfig.encoder
       .positionConversionFactor(Constants.ShooterConstants.turretPositionFactor);
     turretMotorConfig.smartCurrentLimit(30);
-    
+ 
     shooterMotorConfig2.inverted(true);
 
     shooterMotorConfig1.idleMode(IdleMode.kCoast);
@@ -118,7 +153,7 @@ public class Shooter extends SubsystemBase {
                      Constants.ShooterConstants.turretMinLimit,
                      Constants.ShooterConstants.turretMaxLimit);
     turretMotorController.setSetpoint(position, ControlType.kPosition);
-    
+ 
   }
 
   public void setShooterVelocity(double velocity){
@@ -157,56 +192,114 @@ public class Shooter extends SubsystemBase {
     // get the VECTOR from the robot to the target (translation2d)
     // this is to get the SOTF
     // https://blog.eeshwark.com/robotblog/shooting-on-the-fly
-    Translation2d shootDirection = shooterTargetPose.getTranslation().minus(robotPose.getTranslation());
-    Rotation2d shootRotationInFieldCoords = shootDirection.getAngle();
-    Rotation2d robotRotationInFieldCoords = robotPose.getRotation();
-    shootRotationInRobotCoords = shootRotationInFieldCoords
-                                 .minus(robotRotationInFieldCoords)
-                                 .unaryMinus().plus(Rotation2d.k180deg); // shooter is "backwards" on robot, and opposite rotation dir
 
-    s_swerve.field.getObject("target").setPose(shooterTargetPose);
+    Translation2d shooterOffsetOnRobot = new Translation2d(Units.inchesToMeters(-4.5), Units.inchesToMeters(-4.5));
+    Translation2d locationOfShooter = shooterOffsetOnRobot.rotateBy(robotPose.getRotation())
+                                      .plus(robotPose.getTranslation());
+    s_swerve.field.getObject("shooter").setPose(new Pose2d(locationOfShooter, Rotation2d.kZero));
 
-    // Only command the turret if it can reach the desired position
-    if (shootRotationInRobotCoords.getRotations() > Constants.ShooterConstants.turretMinLimit &&
-        shootRotationInRobotCoords.getRotations() < Constants.ShooterConstants.turretMaxLimit) {
-      setTurretPosition(shootRotationInRobotCoords.getRotations());
-    }
+    boolean USE_SHOOT_ON_FLY = true;
+    if (!USE_SHOOT_ON_FLY) {
+      Translation2d shootDirection = shooterTargetPose.getTranslation().minus(locationOfShooter);
+      Rotation2d shootRotationInFieldCoords = shootDirection.getAngle();
+      Rotation2d robotRotationInFieldCoords = robotPose.getRotation();
+      shootRotationInRobotCoords = shootRotationInFieldCoords
+                                  .minus(robotRotationInFieldCoords)
+                                  .unaryMinus().plus(Rotation2d.k180deg); // shooter is "backwards" on robot, and opposite rotation dir
 
-    // Calculate shooter speed from distance to target using lookup table
-    double distanceToGoal = shootDirection.getNorm();
-    if (distanceToGoal >= minimumShootingDistance && distanceToGoal <= maximumDistanceForCafeteria) {
-      targetShooterSpeed = SHOOTER_MAP.get(shootDirection.getNorm());
+      s_swerve.field.getObject("target").setPose(shooterTargetPose);
+
+      // Only command the turret if it can reach the desired position
+      if (shootRotationInRobotCoords.getRotations() > Constants.ShooterConstants.turretMinLimit &&
+          shootRotationInRobotCoords.getRotations() < Constants.ShooterConstants.turretMaxLimit) {
+        setTurretPosition(shootRotationInRobotCoords.getRotations());
+      }
+
+      // Calculate shooter speed from distance to target using lookup table
+      double distanceToGoal = shootDirection.getNorm();
+      if (distanceToGoal >= minimumShootingDistance /*&& distanceToGoal <= maximumDistanceForCafeteria*/) {
+        targetShooterSpeed = SHOOTER_RPM_MAP.get(distanceToGoal);
+      }
+      else { // if too close, don't try to run shooter
+        targetShooterSpeed = 0;
+      }
+
+      SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
+      //SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
+    } else {
+      ChassisSpeeds robotSpeed = s_swerve.getFieldVelocity();
+      Translation2d robotVelVec = new Translation2d(robotSpeed.vxMetersPerSecond, robotSpeed.vyMetersPerSecond);
+
+      // 1. LATENCY COMP
+      double latency = 0.15; // s, Tuned constant
+      Translation2d futurePos = locationOfShooter.plus( robotVelVec.times(latency) );
+
+      // 2. GET TARGET VECTOR
+      Translation2d goalLocation = shooterTargetPose.getTranslation();
+      Translation2d targetVec = goalLocation.minus(futurePos);
+      double distanceToGoal = targetVec.getNorm();
+
+      // 3. CALCULATE IDEAL SHOT (Stationary)
+      // Note: This returns HORIZONTAL velocity component
+      double idealHorizontalSpeed = distanceToGoal / SHOOTER_TOF_MAP.get(distanceToGoal);
+
+      // 4. VECTOR SUBTRACTION
+      Translation2d shotVec = targetVec.div(distanceToGoal).times(idealHorizontalSpeed).minus(robotVelVec);
+
+      // 5. CONVERT TO CONTROLS
+      double newHorizontalSpeed_mps = shotVec.getNorm();
+
+      double effectiveDistanceToGoal = INVERSE_SHOOTER_SPEED_MAP.get(newHorizontalSpeed_mps);
+ 
+      // Calculate shooter speed from distance to target using lookup table
+      if (effectiveDistanceToGoal >= minimumShootingDistance /*&& effectiveDistanceToGoal <= maximumDistanceForCafeteria*/) {
+        targetShooterSpeed = SHOOTER_RPM_MAP.get(effectiveDistanceToGoal);
+      }
+      else { // if too close, don't try to run shooter
+        targetShooterSpeed = 0;
+      }
+
+      // Set turret rotation
+      shootRotationInRobotCoords = shotVec.getAngle()
+                                  .minus(robotPose.getRotation())
+                                  .unaryMinus().plus(Rotation2d.k180deg); // shooter is "backwards" on robot, and opposite rotation dir
+
+      s_swerve.field.getObject("target").setPose(shooterTargetPose);
+
+      // Only command the turret if it can reach the desired position
+      if (shootRotationInRobotCoords.getRotations() > Constants.ShooterConstants.turretMinLimit &&
+          shootRotationInRobotCoords.getRotations() < Constants.ShooterConstants.turretMaxLimit) {
+        setTurretPosition(shootRotationInRobotCoords.getRotations());
+      }
+
+      SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
+      //SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
     }
-    else { // if too close, don't try to run shooter
-      targetShooterSpeed = 0;
-    }
-    //targetShooterSpeed = SmartDashboard.getNumber("target shooter speed", 2600.0);
 
 
     SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("turret goal", shootRotationInRobotCoords.getRotations());
 
-    // put both of these numbers on the smartdashboard
     SmartDashboard.putNumber("shooter 1 actual RPM", shooterMotor1.getEncoder().getVelocity());
     SmartDashboard.putNumber("shooter 2 actual RPM", shooterMotor2.getEncoder().getVelocity());
 
-
     SmartDashboard.putBoolean("On Target", isShooterOnTarget());
     SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
-    SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
-    SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
-
-    SmartDashboard.putBoolean("Hub Active", isHubActive());
-    
   }
-  public boolean isShooterAtSpeed(){
+
+  public boolean isShooterAtSpeed() {
     return Math.abs(shooterMotor1.getEncoder().getVelocity() - targetShooterSpeed) < 500
            && targetShooterSpeed > 500;
   }
-  public boolean isShooterOnTarget(){
-    return Math.abs(turretMotor.getEncoder().getPosition() -
-                    shootRotationInRobotCoords.getRotations()) < 0.01;
-    // typical error seems to be 0.004 or 0.007 rotations
+
+  public boolean isShooterOnTarget() {
+    double turretError = turretMotor.getEncoder().getPosition() - shootRotationInRobotCoords.getRotations();
+    SmartDashboard.putNumber("turret error", turretError);
+
+    return Math.abs(turretError) < 0.02;
+    // typical error seems to be 0.004 or 0.007 rotations standstill
   }
+
   public void runShooterThenRest(Feeder feeder, Spindexer spindexer){
     powerShooter(targetShooterSpeed);
     if (isShooterAtSpeed() && isShooterOnTarget()){
@@ -277,64 +370,5 @@ public class Shooter extends SubsystemBase {
 
   public boolean isBlueAlliance() {
     return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
-  }
-
-  public boolean isHubActive() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    // If we have no alliance, we cannot be enabled, therefore no hub.
-    if (alliance.isEmpty()) {
-      return false;
-    }
-    // Hub is always enabled in autonomous.
-    if (DriverStation.isAutonomousEnabled()) {
-      return true;
-    }
-    // At this point, if we're not teleop enabled, there is no hub.
-    if (!DriverStation.isTeleopEnabled()) {
-      return false;
-    }
-
-    // We're teleop enabled, compute.
-    double matchTime = DriverStation.getMatchTime();
-    String gameData = DriverStation.getGameSpecificMessage();
-    // If we have no game data, we cannot compute, assume hub is active, as it's likely early in teleop.
-    if (gameData.isEmpty()) {
-      return true;
-    }
-    boolean redInactiveFirst = false;
-    switch (gameData.charAt(0)) {
-      case 'R' -> redInactiveFirst = true;
-      case 'B' -> redInactiveFirst = false;
-      default -> {
-        // If we have invalid game data, assume hub is active.
-        return true;
-      }
-    }
-
-    // Shift 1 is active for blue if red won auto, or red if blue won auto.
-    boolean shift1Active = switch (alliance.get()) {
-      case Red -> !redInactiveFirst;
-      case Blue -> redInactiveFirst;
-    };
-
-    if (matchTime > 130) {
-      // Transition shift, hub is active.
-      return true;
-    } else if (matchTime > 105) {
-      // Shift 1
-      return shift1Active;
-    } else if (matchTime > 80) {
-      // Shift 2
-      return !shift1Active;
-    } else if (matchTime > 55) {
-      // Shift 3
-      return shift1Active;
-    } else if (matchTime > 30) {
-      // Shift 4
-      return !shift1Active;
-    } else {
-      // End game, hub always active.
-      return true;
-    }
   }
 }

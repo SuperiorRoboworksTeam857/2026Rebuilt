@@ -32,6 +32,12 @@
                 "data": {
                   "commands": [
                     {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
                       "type": "named",
                       "data": {
                         "name": "extendIntake"
@@ -56,9 +62,35 @@
           }
         },
         {
-          "type": "named",
+          "type": "deadline",
           "data": {
-            "name": "startShooterForFiveSeconds"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "startShooterForFifteenSeconds"
+                }
+              },
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "startIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "agitateIntake"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
         {

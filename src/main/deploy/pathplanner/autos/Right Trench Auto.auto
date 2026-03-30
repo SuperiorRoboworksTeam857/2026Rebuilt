@@ -9,15 +9,47 @@
           "data": {
             "commands": [
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "center to tower"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "right trench to neutral"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "neutral to right scoring"
+                      }
+                    }
+                  ]
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "extendIntake"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 1.0
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "extendIntake"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "startIntake"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -36,7 +68,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "startShooterForFiveSeconds"
+                  "name": "startShooterForFifteenSeconds"
                 }
               },
               {

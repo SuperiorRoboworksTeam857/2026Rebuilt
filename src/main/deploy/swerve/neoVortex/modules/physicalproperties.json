@@ -9,8 +9,8 @@
   },
   "rampRate": {
     "drive": 0.1,
-    "angle": 0.2
+    "angle": 0.0
   },
-  "wheelGripCoefficientOfFriction": 1.19,
+  "wheelGripCoefficientOfFriction": 1.9,
   "optimalVoltage": 12
 }

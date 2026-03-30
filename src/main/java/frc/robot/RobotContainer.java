@@ -9,6 +9,8 @@ import frc.robot.commands.Autos;
 import frc.robot.commands.LimelightRead;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.IntakeExtension;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
@@ -22,11 +24,13 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -47,6 +51,7 @@ public class RobotContainer {
     private final double SLOW_SPEED = 0.3;
 
     private double driveSpeedScaling = NORMAL_SPEED;
+    private boolean robotCentricDriving = false;
 
 
     /* Controllers */
@@ -66,17 +71,16 @@ public class RobotContainer {
             () -> driverStick.getX() * -1 * driveSpeedScaling)
             .withControllerRotationAxis(() -> driverStick.getZ() * -1 * driveSpeedScaling)
             .deadband(OperatorConstants.DEADBAND)
-            .allianceRelativeControl(true);
-
-    SwerveInputStream driveRobotOriented = driveAngularVelocity.copy().robotRelative(true)
-            .allianceRelativeControl(false);
-    
+            .allianceRelativeControl(() -> !robotCentricDriving)
+            .robotRelative(() -> robotCentricDriving);
 
     private final Intake m_intake = new Intake();
+    private final IntakeExtension m_intakeExtension = new IntakeExtension();
     private final Spindexer m_spindexer = new Spindexer();
     private final Feeder m_feeder = new Feeder();
     private final Shooter m_shooter = new Shooter(m_swerve);
     private final Limelight s_Limelight = new Limelight();
+    private final LED s_LED = new LED();
 
     private final JoystickButton highSpeed = new JoystickButton(driverStick, 1);
     private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
@@ -97,6 +101,9 @@ public class RobotContainer {
     private final POVButton intakeExtend = new POVButton(gamepad, Constants.ControllerConstants.intakeExtendPOV);
     private final POVButton intakeContract = new POVButton(gamepad, Constants.ControllerConstants.intakeRetractPOV);
 
+    private final JoystickButton agitateIntake = new JoystickButton(gamepad, Constants.ControllerConstants.agitateIntakeButton);
+
+
     public final AprilTagFieldLayout layout;
 
     /**
@@ -105,13 +112,15 @@ public class RobotContainer {
     public RobotContainer() {
         layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-        // // Start camera streams for both webcams
-        // CameraServer.startAutomaticCapture();
-        // CameraServer.startAutomaticCapture();
+        // Start camera stream for webcam
+        CameraServer.startAutomaticCapture();
 
         s_Limelight.turnOnDriverCam();
         s_Limelight.enableLimelight(false);
         s_Limelight.setPipeline(Limelight.Pipeline.AprilTags);
+
+
+        NamedCommands.registerCommand("driveForwardOneSecond", m_swerve.driveForward().withTimeout(1));
 
         NamedCommands.registerCommand("startSpindexer",
                 new InstantCommand(
@@ -123,6 +132,15 @@ public class RobotContainer {
                 new SequentialCommandGroup(
                         new RunCommand(
                                 () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(5)));
+        NamedCommands.registerCommand("startShooterForTenSeconds",
+                new SequentialCommandGroup(
+                        new RunCommand(
+                                () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(10)));
+        NamedCommands.registerCommand("startShooterForFifteenSeconds",
+                new SequentialCommandGroup(
+                        new RunCommand(
+                                () -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter).withTimeout(15)));
+
 
         NamedCommands.registerCommand("stopSpindexer",
                 new InstantCommand(
@@ -140,22 +158,27 @@ public class RobotContainer {
                                 () -> m_feeder.stopFeeder(), m_feeder),
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
-        NamedCommands.registerCommand("extendIntake",
-                new RunCommand(() -> m_intake.extendIntake(), m_intake).withTimeout(2)
-                        .until(m_intake::isIntakeExtended)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake)));
-        NamedCommands.registerCommand("retractIntake",
-                new RunCommand(() -> m_intake.retractIntake(), m_intake).withTimeout(2)
-                        .until(m_intake::isIntakeRetracted)
-                        .andThen(new InstantCommand(() -> m_intake.stopIntakeExtension(), m_intake)));
+        Command extendIntake =
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(0.8)
+                        .until(m_intakeExtension::isIntakeExtended)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
+        Command retractIntake =
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(0.8)
+                        .until(m_intakeExtension::isIntakeRetracted)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
+
+        NamedCommands.registerCommand("extendIntake", extendIntake);
+        NamedCommands.registerCommand("retractIntake", retractIntake);
+        NamedCommands.registerCommand("agitateIntake",
+                new RepeatCommand(new SequentialCommandGroup(retractIntake, extendIntake)));
+                
 
         Command driveFieldOrientedAnglularVelocity = m_swerve.driveFieldOriented(driveAngularVelocity);
-        Command driveRobotOrientedAngularVelocity = m_swerve.driveFieldOriented(driveRobotOriented); // TODO: add
-                                                                                                     // control to flip
-                                                                                                     // to robot centric
+
         m_swerve.setDefaultCommand(driveFieldOrientedAnglularVelocity);
 
-        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntakeAndExtension(), m_intake));
+        m_intake.setDefaultCommand(new RunCommand(() -> m_intake.stopIntake(), m_intake));
+        m_intakeExtension.setDefaultCommand(new RunCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         m_spindexer.setDefaultCommand(new RunCommand(() -> m_spindexer.stopSpindexer(), m_spindexer));
         m_feeder.setDefaultCommand(new RunCommand(() -> m_feeder.stopFeeder(), m_feeder));
         m_shooter.setDefaultCommand(new RunCommand(() -> m_shooter.stopShooter(), m_shooter));
@@ -177,6 +200,9 @@ public class RobotContainer {
         highSpeed.whileTrue(new InstantCommand(() -> driveSpeedScaling = FULL_SPEED))
                  .onFalse(new InstantCommand(() -> driveSpeedScaling = NORMAL_SPEED));
 
+        robotCentric.whileTrue(new InstantCommand(() -> robotCentricDriving = true))
+                    .onFalse(new InstantCommand(() -> robotCentricDriving = false));
+
         // SHOOTER CONTROLS
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
         manualShooter.whileTrue(new RunCommand(() -> m_shooter.startShooter(), m_shooter));
@@ -193,8 +219,24 @@ public class RobotContainer {
         intakeIn.whileTrue(new RunCommand(() -> m_intake.startIntake(), m_intake));
         intakeOut.whileTrue(new RunCommand(() -> m_intake.reverseIntake(), m_intake));
 
-        intakeExtend.whileTrue(new RunCommand(() -> m_intake.extendIntake(), m_intake));
-        intakeContract.whileTrue(new RunCommand(() -> m_intake.retractIntake(), m_intake));
+        intakeExtend.whileTrue(new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension));
+        intakeContract.whileTrue(new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension));
+
+        Command extendIntake =
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(0.8)
+                        .until(m_intakeExtension::isIntakeExtended)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
+        Command retractIntake =
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(0.8)
+                        .until(m_intakeExtension::isIntakeRetracted)
+                        .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
+
+        agitateIntake.whileTrue(
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> m_intake.startIntake(), m_intake),
+                        new RepeatCommand(new SequentialCommandGroup(retractIntake, extendIntake))
+                )
+        );
     }
 
     public void setMotorBrake(boolean brake) {
@@ -208,9 +250,15 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         if (buttonBox.getRawButton(3)) {
-            return new PathPlannerAuto("Center Auto");
-        } else if (buttonBox.getRawButton(4)) {
             return new PathPlannerAuto("Left Trench Auto");
+        } else if (buttonBox.getRawButton(4)) {
+            return new PathPlannerAuto("Center Auto");
+        } else if (buttonBox.getRawButton(5)) {
+            return new PathPlannerAuto("Right Trench Auto");
+        } else if (buttonBox.getRawButton(6)) {
+            return new PathPlannerAuto("Right Trench + Outpost Auto");
+        } else if (buttonBox.getRawButton(7)) {
+            return new PathPlannerAuto("Center Auto + Depot");
         }
 
         // An example command will be run in autonomous

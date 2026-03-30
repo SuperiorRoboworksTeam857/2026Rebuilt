@@ -28,10 +28,10 @@ public final class Constants {
   public static final double deltaTime = 0.02;
 
   public static class Swerve {
-    public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
+    public static final double ROBOT_MASS = (105+10+13) * 0.453592; // 32lbs * kg per pound
     public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
     public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
-    public static final double MAX_SPEED  = Units.feetToMeters(10);
+    public static final double MAX_SPEED  = Units.feetToMeters(17);
   }
 
  public static final class AutonConstants {
@@ -70,13 +70,14 @@ public final class Constants {
     public static final double shooterKV = 0.0018;
 
     // Turret constants for the turret
-    public static final double turretKP = 2.5;
+    public static final double turretKP = 5.5;
     public static final double turretKI = 0;
-    public static final double turretKD = 0;
+    public static final double turretKD = 1.0;
+    public static final double turretKV = 1.0;
 
     // Convert turret motor angle to be the actual turret angle in rotations
     public static final double turretPositionFactor = (20.0 / 200.0) * (1.0 / 5.0); // 1/50
-    public static final double turretMinLimit = -0.45; // -0.45
+    public static final double turretMinLimit = -0.4; // -0.45
     public static final double turretMaxLimit = 0.4; // 0.4
 
 
@@ -87,18 +88,18 @@ public final class Constants {
                                                             Units.inchesToMeters(158.845),
                                                             Rotation2d.kZero);
 
-    public static final Pose2d blueDownCorner =  new Pose2d(Units.inchesToMeters(12),    // wall at 0
-                                                            Units.inchesToMeters(25.37), // wall at 0
+    public static final Pose2d blueDownCorner =  new Pose2d(Units.inchesToMeters(12 + 48*0),    // wall at 0
+                                                            Units.inchesToMeters(25.37 + 48), // wall at 0
                                                             Rotation2d.kZero);
-    public static final Pose2d blueUpCorner =    new Pose2d(Units.inchesToMeters(12),    // wall at 0
-                                                            Units.inchesToMeters(292.31),// wall at 318
+    public static final Pose2d blueUpCorner =    new Pose2d(Units.inchesToMeters(12 + 48*0),    // wall at 0
+                                                            Units.inchesToMeters(292.31 - 48),// wall at 318
                                                             Rotation2d.kZero);
 
-    public static final Pose2d redDownCorner =  new Pose2d(Units.inchesToMeters(638),    // wall at 650
-                                                           Units.inchesToMeters(25.37),  // wall at 0
+    public static final Pose2d redDownCorner =  new Pose2d(Units.inchesToMeters(638 - 48*0),    // wall at 650
+                                                           Units.inchesToMeters(25.37 + 48),  // wall at 0
                                                            Rotation2d.kZero);
-    public static final Pose2d redUpCorner =    new Pose2d(Units.inchesToMeters(638),    // wall at 650
-                                                           Units.inchesToMeters(292.31), // wall at 318
+    public static final Pose2d redUpCorner =    new Pose2d(Units.inchesToMeters(638 - 48*0),    // wall at 650
+                                                           Units.inchesToMeters(292.31 - 48), // wall at 318
                                                            Rotation2d.kZero);
   }
 
@@ -127,6 +128,8 @@ public final class Constants {
 
     public static final int intakeExtendPOV = 180;
     public static final int intakeRetractPOV = 0;
+
+    public static final int agitateIntakeButton = XboxController.Button.kA.value;
   }
 
   public static final class IntakeConstants {
