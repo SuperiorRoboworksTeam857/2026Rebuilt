@@ -88,6 +88,7 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(driverStick, 4);
     private final JoystickButton centerModules = new JoystickButton(driverStick, 5);
     private final JoystickButton xLockWheels = new JoystickButton(driverStick, 6);
+    private final JoystickButton alignToField = new JoystickButton(driverStick, 7);
 
     private final JoystickButton shootShooter = new JoystickButton(gamepad,
             Constants.ControllerConstants.shootShooterButton);
@@ -237,6 +238,10 @@ public class RobotContainer {
                         new RepeatCommand(new SequentialCommandGroup(retractIntake, extendIntake))
                 )
         );
+
+        // align to the field
+        // aims to the nearest right angle
+        alignToField.whileTrue(m_swerve.aimToNearestRight());
     }
 
     public void setMotorBrake(boolean brake) {

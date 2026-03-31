@@ -28,6 +28,8 @@ import frc.robot.LimelightHelpers;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
@@ -343,6 +345,33 @@ public class SwerveSubsystem extends SubsystemBase
                       rotation,
                       fieldRelative,
                       false); // Open loop is disabled since it shouldn't be used most of the time.
+  }
+
+  /**
+   * Aim the robot to the nearest right angle using odo
+   */
+  public Command aimToNearestRight()
+  {
+    return run(() -> {
+      Rotation2d currentHeading = getHeading();
+      double currentDegrees = currentHeading.getDegrees();
+
+      // get closest right angle from the list of acceptable angles in Constants, and set that as the target angle
+      // compare each angle in the list to the current angle, and find the one with the smallest difference
+      // 0 and 360 are both in the list to allow for wraparound
+      double finalTargetAngle = Constants.Swerve.ACCEPTABLE_ALIGNMENT_ANGLES.stream()
+          .min((a, b) -> Double.compare(Math.abs(a - currentDegrees), Math.abs(b - currentDegrees)))
+          .orElse(0.0);
+
+      drive(
+        getTargetSpeeds(
+          0,
+          0,
+          Rotation2d.fromDegrees(finalTargetAngle)
+        )
+      ); 
+    });
+
   }
 
   /**
