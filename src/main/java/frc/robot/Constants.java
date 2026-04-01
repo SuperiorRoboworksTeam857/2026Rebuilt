@@ -85,6 +85,10 @@ public final class Constants {
     public static final double turretMinLimit = -0.4; // -0.45
     public static final double turretMaxLimit = 0.4; // 0.4
 
+    public static final double maxManualAdjustment = 100;
+    public static final double minManualAdjustment = -100;
+    public static final boolean useManualAdjustment = true;
+
 
     public static final Pose2d redHubLocation =  new Pose2d(Units.inchesToMeters(469.11),
                                                             Units.inchesToMeters(158.845),
@@ -128,6 +132,8 @@ public final class Constants {
     public static final int manualShooterButton = XboxController.Button.kX.value;
     public static final int intakeInButton = XboxController.Button.kRightBumper.value;
     public static final int intakeOutButton = XboxController.Button.kLeftBumper.value;
+    public static final int shooterAdjustUp = 90;
+     public static final int shooterAdjustDown = 270;
 
     public static final int reverseEverything = XboxController.Button.kBack.value;
 

@@ -101,6 +101,8 @@ public class RobotContainer {
     private final JoystickButton intakeOut = new JoystickButton(gamepad, Constants.ControllerConstants.intakeOutButton);
     private final POVButton intakeExtend = new POVButton(gamepad, Constants.ControllerConstants.intakeExtendPOV);
     private final POVButton intakeContract = new POVButton(gamepad, Constants.ControllerConstants.intakeRetractPOV);
+    private final POVButton shooterUp = new POVButton(gamepad, Constants.ControllerConstants.shooterAdjustUp);
+    private final POVButton shooterDown = new POVButton(gamepad, Constants.ControllerConstants.shooterAdjustDown);
 
     private final JoystickButton agitateIntake = new JoystickButton(gamepad, Constants.ControllerConstants.agitateIntakeButton);
 
@@ -119,6 +121,7 @@ public class RobotContainer {
         s_Limelight.turnOnDriverCam();
         s_Limelight.enableLimelight(false);
         s_Limelight.setPipeline(Limelight.Pipeline.AprilTags);
+
 
 
         NamedCommands.registerCommand("driveForwardOneSecond", m_swerve.driveForward().withTimeout(1));
@@ -207,6 +210,19 @@ public class RobotContainer {
         // SHOOTER CONTROLS
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
         manualShooter.whileTrue(new RunCommand(() -> m_shooter.startShooter(), m_shooter));
+
+        shooterUp.onTrue(
+                new InstantCommand(
+                        () -> m_shooter.increaseManualAdjustment(), m_shooter
+                )
+        );
+        shooterDown.onTrue(
+                new InstantCommand(
+                        () -> m_shooter.decreaseManualAdjustment(), m_shooter
+                )
+        );
+        
+
 
         // SPINDEXER AND FEEDER CONTROLS
         reverseEverything.whileTrue(

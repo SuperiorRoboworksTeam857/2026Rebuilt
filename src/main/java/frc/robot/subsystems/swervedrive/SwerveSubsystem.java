@@ -104,7 +104,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     swerveDrive.stopOdometryThread();
 
-    field = new Field2d();
+    field = swerveDrive.field;
     SmartDashboard.putData("Field", field);
   }
 

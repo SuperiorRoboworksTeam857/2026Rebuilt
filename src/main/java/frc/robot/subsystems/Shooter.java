@@ -42,6 +42,9 @@ public class Shooter extends SubsystemBase {
   private SparkFlexConfig shooterMotorConfig2 = new SparkFlexConfig();
   private double targetShooterSpeed = 0;
   private SparkFlexConfig turretMotorConfig = new SparkFlexConfig();
+
+  private double manualSpeedAdjustment = 0;
+  private boolean isTooClose = false;
   // then we have the actual closed loop controllers
   // these ensure that we are running at the expected setpoint (velocity, position, etc.)
   private SparkClosedLoopController shooterMotor1Controller = shooterMotor1.getClosedLoopController();
@@ -219,12 +222,13 @@ public class Shooter extends SubsystemBase {
       double distanceToGoal = shootDirection.getNorm();
       if (distanceToGoal >= minimumShootingDistance /*&& distanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(distanceToGoal);
+        isTooClose = false;
       }
       else { // if too close, don't try to run shooter
         targetShooterSpeed = 0;
+        isTooClose = true;
       }
 
-      SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
       //SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
     } else {
       ChassisSpeeds robotSpeed = s_swerve.getFieldVelocity();
@@ -254,9 +258,15 @@ public class Shooter extends SubsystemBase {
       // Calculate shooter speed from distance to target using lookup table
       if (effectiveDistanceToGoal >= minimumShootingDistance /*&& effectiveDistanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(effectiveDistanceToGoal);
+        isTooClose = false;
       }
       else { // if too close, don't try to run shooter
         targetShooterSpeed = 0;
+        isTooClose = true;
+      }
+
+      if(Constants.ShooterConstants.useManualAdjustment){
+        targetShooterSpeed += manualSpeedAdjustment;
       }
 
       // Set turret rotation
@@ -272,10 +282,11 @@ public class Shooter extends SubsystemBase {
         setTurretPosition(shootRotationInRobotCoords.getRotations());
       }
 
-      SmartDashboard.putBoolean("Too Close", distanceToGoal < minimumShootingDistance);
+      
       //SmartDashboard.putBoolean("Too Far", distanceToGoal > maximumDistanceForCafeteria);
     }
 
+    SmartDashboard.putBoolean("Too Close", !isTooClose);
 
     SmartDashboard.putNumber("turret angle (rotations)", turretMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("turret goal", shootRotationInRobotCoords.getRotations());
@@ -370,5 +381,21 @@ public class Shooter extends SubsystemBase {
 
   public boolean isBlueAlliance() {
     return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Blue;
+  }
+
+  public void adjustToMaxMinManualAdjustment(){
+    if(manualSpeedAdjustment > Constants.ShooterConstants.maxManualAdjustment){
+      manualSpeedAdjustment = Constants.ShooterConstants.maxManualAdjustment;
+    }else if(manualSpeedAdjustment < Constants.ShooterConstants.minManualAdjustment){
+      manualSpeedAdjustment = Constants.ShooterConstants.minManualAdjustment;
+    }
+  }
+
+  public void increaseManualAdjustment(){
+    manualSpeedAdjustment += 10;
+  }
+
+  public void decreaseManualAdjustment(){
+    manualSpeedAdjustment -= 10;
   }
 }
