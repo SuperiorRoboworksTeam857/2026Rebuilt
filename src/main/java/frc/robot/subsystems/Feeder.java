@@ -35,7 +35,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public void runFeeder(double speed) {
-    feederMotorFront.set(speed * Constants.FeederConstants.feederSpeedMultiplier);
+    feederMotorFront.set(speed * Constants.FeederConstants.feederSpeedMultiplier * 3.0/2.25);
     feederMotorBack.set(speed * Constants.FeederConstants.feederSpeedMultiplier);
   }
 
