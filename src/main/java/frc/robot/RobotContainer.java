@@ -48,7 +48,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 public class RobotContainer {
     private final double FULL_SPEED = 1;
     private final double NORMAL_SPEED = 0.7;
-    private final double SLOW_SPEED = 0.3;
+    private final double SLOW_SPEED = 0.5;
 
     private double driveSpeedScaling = NORMAL_SPEED;
     private boolean robotCentricDriving = false;
