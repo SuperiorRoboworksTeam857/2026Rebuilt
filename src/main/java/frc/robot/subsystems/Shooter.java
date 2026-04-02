@@ -220,7 +220,7 @@ public class Shooter extends SubsystemBase {
 
       // Calculate shooter speed from distance to target using lookup table
       double distanceToGoal = shootDirection.getNorm();
-      if (distanceToGoal >= minimumShootingDistance /*&& distanceToGoal <= maximumDistanceForCafeteria*/) {
+      if (distanceToGoal > minimumShootingDistance /*&& distanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(distanceToGoal);
         isTooClose = false;
       }
@@ -255,8 +255,10 @@ public class Shooter extends SubsystemBase {
 
       double effectiveDistanceToGoal = INVERSE_SHOOTER_SPEED_MAP.get(newHorizontalSpeed_mps);
  
+      SmartDashboard.putNumber("eff. dist.", effectiveDistanceToGoal);
+
       // Calculate shooter speed from distance to target using lookup table
-      if (effectiveDistanceToGoal >= minimumShootingDistance /*&& effectiveDistanceToGoal <= maximumDistanceForCafeteria*/) {
+      if (effectiveDistanceToGoal > minimumShootingDistance /*&& effectiveDistanceToGoal <= maximumDistanceForCafeteria*/) {
         targetShooterSpeed = SHOOTER_RPM_MAP.get(effectiveDistanceToGoal);
         isTooClose = false;
       }
