@@ -7,6 +7,7 @@ package frc.robot.subsystems.swervedrive;
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 import static edu.wpi.first.units.Units.Meter;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -354,7 +355,7 @@ public class SwerveSubsystem extends SubsystemBase
   {
     return run(() -> {
       Rotation2d currentHeading = getHeading();
-      double currentDegrees = currentHeading.getDegrees();
+      double currentDegrees = MathUtil.inputModulus(currentHeading.getDegrees(), 0, 360);
 
       // get closest right angle from the list of acceptable angles in Constants, and set that as the target angle
       // compare each angle in the list to the current angle, and find the one with the smallest difference
