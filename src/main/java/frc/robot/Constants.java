@@ -87,7 +87,7 @@ public final class Constants {
 
     public static final double maxManualAdjustment = 100;
     public static final double minManualAdjustment = -100;
-    public static final boolean useManualAdjustment = true;
+    public static final boolean useManualAdjustment = false;
 
 
     public static final Pose2d redHubLocation =  new Pose2d(Units.inchesToMeters(469.11),
