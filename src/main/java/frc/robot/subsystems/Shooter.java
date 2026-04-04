@@ -65,12 +65,12 @@ public class Shooter extends SubsystemBase {
   //private static final double maximumDistanceForCafeteria = 4.0;
   private static final InterpolatingDoubleTreeMap SHOOTER_RPM_MAP = new InterpolatingDoubleTreeMap();
   static {
-    SHOOTER_RPM_MAP.put(2.0, 2650.0);
-    SHOOTER_RPM_MAP.put(2.5, 2850.0);
-    SHOOTER_RPM_MAP.put(3.0, 3050.0);
-    SHOOTER_RPM_MAP.put(3.5, 3250.0);
-    SHOOTER_RPM_MAP.put(4.0, 3450.0);
-    SHOOTER_RPM_MAP.put(5.0, 4050.0);
+    SHOOTER_RPM_MAP.put(2.0, 2700.0);
+    SHOOTER_RPM_MAP.put(2.5, 2900.0);
+    SHOOTER_RPM_MAP.put(3.0, 3100.0);
+    SHOOTER_RPM_MAP.put(3.5, 3300.0);
+    SHOOTER_RPM_MAP.put(4.0, 3500.0);
+    SHOOTER_RPM_MAP.put(5.0, 4100.0);
     // SHOOTER_RPM_MAP.put(4.5, 3600.0);
     // SHOOTER_RPM_MAP.put(5.0, 3800.0);
     // SHOOTER_RPM_MAP.put(5.5, 4000.0);
