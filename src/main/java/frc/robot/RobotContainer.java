@@ -227,7 +227,7 @@ public class RobotContainer {
         // SPINDEXER AND FEEDER CONTROLS
         reverseEverything.whileTrue(
                 new ParallelCommandGroup(
-                        new RunCommand(() -> m_spindexer.reverseSpindexer(), m_spindexer),
+                        new RunCommand(() -> m_spindexer.reverseSpindexerOnly(), m_spindexer),
                         new RunCommand(() -> m_feeder.reverseFeeder(), m_feeder)
                 )
         );

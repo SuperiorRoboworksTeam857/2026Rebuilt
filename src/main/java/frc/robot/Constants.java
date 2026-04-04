@@ -116,7 +116,9 @@ public final class Constants {
   // 2.9.26 unknown what this will look like
   public static final class SpindexerConstants {
     public static final int spindexerWheel = 24; // will spin in the center
+    public static final int spindexerAgitator = 30; //top roller above spindexer
     public static final double spindexerSpeedMultiplier = 1; // basic speed multiplier
+    public static final double spindexerAgitatorMultiplier = 1;
   }
 
   // constants for the Feeder

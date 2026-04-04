@@ -22,28 +22,62 @@ public class Spindexer extends SubsystemBase {
   private SparkFlexConfig spindexerConfig = new SparkFlexConfig(); // to handle the PID loop of the middle loop
   private double targetSpindexerSpeed = 0.4;
 
+  private SparkFlex spindexerAgitator = new SparkFlex(Constants.SpindexerConstants.spindexerAgitator,
+      MotorType.kBrushless);
+  private SparkFlexConfig spindexerAgitatorConfig = new SparkFlexConfig(); // to handle the PID loop of the middle loop
+
   public Spindexer() {
     spindexerConfig.idleMode(IdleMode.kBrake);
 
     spindexerMotor.configure(spindexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    spindexerAgitatorConfig.idleMode(IdleMode.kCoast);
+
+    spindexerAgitator.configure(spindexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
-  
+
   public void runSpindexer(double speed) {
     spindexerMotor.set(speed * Constants.SpindexerConstants.spindexerSpeedMultiplier);
+    spindexerAgitator.set(speed * Constants.SpindexerConstants.spindexerAgitatorMultiplier);
   }
+
   public void startSpindexer() {
     runSpindexer(targetSpindexerSpeed);
   }
+
   public void stopSpindexer() {
     runSpindexer(0);
   }
+
   public void reverseSpindexer() {
     runSpindexer(-targetSpindexerSpeed);
+  }
+
+  public void runSpindexerOnly(double speed) {
+    spindexerMotor.set(speed * Constants.SpindexerConstants.spindexerSpeedMultiplier);
+    spindexerAgitator.set(0);
+  }
+    public void startSpindexerOnly() {
+    runSpindexerOnly(targetSpindexerSpeed);
+  }
+    public void reverseSpindexerOnly() {
+    runSpindexerOnly(-targetSpindexerSpeed);
+  }
+  public void runAgitatorOnly(double speed) {
+    spindexerMotor.set(0);
+    spindexerAgitator.set(speed * Constants.SpindexerConstants.spindexerAgitatorMultiplier);
+  }
+    public void startAgitatorOnly() {
+    runAgitatorOnly(targetSpindexerSpeed);
+  }
+    public void reverseAgitatorOnly() {
+    runAgitatorOnly(-targetSpindexerSpeed);
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("spindexer motor actual RPM", spindexerMotor.getEncoder().getVelocity());
+    SmartDashboard.putNumber("agitator motor actual RPM", spindexerAgitator.getEncoder().getVelocity());
   }
 
   @Override
