@@ -163,11 +163,11 @@ public class RobotContainer {
                         new InstantCommand(
                                 () -> m_shooter.stopShooter(), m_shooter)));
         Command extendIntake =
-                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(0.8)
-                        .until(m_intakeExtension::isIntakeExtended)
+                new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(1)
+                        .until(m_intakeExtension::isIntakeMostlyExtended)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         Command retractIntake =
-                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(0.8)
+                 new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(1)
                         .until(m_intakeExtension::isIntakeRetracted)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
 
@@ -273,13 +273,13 @@ public class RobotContainer {
         if (buttonBox.getRawButton(3)) {
             return new PathPlannerAuto("Left Trench Auto");
         } else if (buttonBox.getRawButton(4)) {
-            return new PathPlannerAuto("Center Auto");
+            return new PathPlannerAuto("Left Trench Auto + Depot");
         } else if (buttonBox.getRawButton(5)) {
-            return new PathPlannerAuto("Right Trench Auto");
+            return new PathPlannerAuto("Center Auto");
         } else if (buttonBox.getRawButton(6)) {
-            return new PathPlannerAuto("Right Trench + Outpost Auto");
-        } else if (buttonBox.getRawButton(7)) {
             return new PathPlannerAuto("Center Auto + Depot");
+        } else if (buttonBox.getRawButton(7)) {
+            return new PathPlannerAuto("Right Trench Auto");
         }
 
         // An example command will be run in autonomous

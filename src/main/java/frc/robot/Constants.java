@@ -151,6 +151,7 @@ public final class Constants {
     public static final double intakeSpeedMultiplier = 1; // basic speed multiplier
 
     public static final double intakeExtendedPosition = 11;
+    public static final double intakeMostlyExtendedPosition = 8;
     public static final double intakeContractedPosition = 0;
 
     // PID constants for the extension
