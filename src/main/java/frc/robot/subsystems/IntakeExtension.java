@@ -68,10 +68,6 @@ public class IntakeExtension extends SubsystemBase {
     return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - Constants.IntakeConstants.intakeExtendedPosition) < 1;
   }
 
-  public boolean isIntakeMostlyExtended() {
-    return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - Constants.IntakeConstants.intakeMostlyExtendedPosition) < 1;
-  }
-
   public boolean isIntakeRetracted() {
     return Math.abs(intakeExtensionMotor.getEncoder().getPosition() - Constants.IntakeConstants.intakeContractedPosition) < 1;
   }

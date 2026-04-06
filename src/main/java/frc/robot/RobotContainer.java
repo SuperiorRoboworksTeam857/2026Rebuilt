@@ -164,7 +164,7 @@ public class RobotContainer {
                                 () -> m_shooter.stopShooter(), m_shooter)));
         Command extendIntake =
                 new RunCommand(() -> m_intakeExtension.extendIntake(), m_intakeExtension).withTimeout(1)
-                        .until(m_intakeExtension::isIntakeMostlyExtended)
+                        .until(m_intakeExtension::isIntakeExtended)
                         .andThen(new InstantCommand(() -> m_intakeExtension.stopIntakeExtension(), m_intakeExtension));
         Command retractIntake =
                  new RunCommand(() -> m_intakeExtension.retractIntake(), m_intakeExtension).withTimeout(1)
