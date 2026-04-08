@@ -211,16 +211,8 @@ public class RobotContainer {
         shootShooter.whileTrue(new RunCommand(() -> m_shooter.runShooterThenRest(m_feeder, m_spindexer), m_shooter));
         manualShooter.whileTrue(new RunCommand(() -> m_shooter.startShooter(), m_shooter));
 
-        shooterUp.onTrue(
-                new InstantCommand(
-                        () -> m_shooter.increaseManualAdjustment(), m_shooter
-                )
-        );
-        shooterDown.onTrue(
-                new InstantCommand(
-                        () -> m_shooter.decreaseManualAdjustment(), m_shooter
-                )
-        );
+        shooterUp.onTrue(new InstantCommand(() -> m_shooter.increaseManualAdjustment()));
+        shooterDown.onTrue(new InstantCommand(() -> m_shooter.decreaseManualAdjustment()));
         
 
 
