@@ -298,6 +298,8 @@ public class Shooter extends SubsystemBase {
 
     SmartDashboard.putBoolean("On Target", isShooterOnTarget());
     SmartDashboard.putBoolean("At Speed", isShooterAtSpeed());
+
+    SmartDashboard.putNumber("Shoot adjust", manualSpeedAdjustment);
   }
 
   public boolean isShooterAtSpeed() {
