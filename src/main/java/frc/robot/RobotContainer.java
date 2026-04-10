@@ -27,6 +27,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -84,7 +85,7 @@ public class RobotContainer {
 
     private final JoystickButton highSpeed = new JoystickButton(driverStick, 1);
     private final JoystickButton slowSpeed = new JoystickButton(driverStick, 2);
-    private final JoystickButton zeroGyro = new JoystickButton(driverStick, 3);
+    private final JoystickButton zeroGyro = new JoystickButton(driverStick, 11);
     private final JoystickButton robotCentric = new JoystickButton(driverStick, 4);
     private final JoystickButton centerModules = new JoystickButton(driverStick, 5);
     private final JoystickButton xLockWheels = new JoystickButton(driverStick, 6);
@@ -103,6 +104,7 @@ public class RobotContainer {
     private final POVButton intakeContract = new POVButton(gamepad, Constants.ControllerConstants.intakeRetractPOV);
     private final POVButton shooterUp = new POVButton(gamepad, Constants.ControllerConstants.shooterAdjustUp);
     private final POVButton shooterDown = new POVButton(gamepad, Constants.ControllerConstants.shooterAdjustDown);
+    private final JoystickButton shooterAdjustZero = new JoystickButton(gamepad, XboxController.Button.kLeftStick.value);
 
     private final JoystickButton agitateIntake = new JoystickButton(gamepad, Constants.ControllerConstants.agitateIntakeButton);
 
@@ -213,6 +215,7 @@ public class RobotContainer {
 
         shooterUp.onTrue(new InstantCommand(() -> m_shooter.increaseManualAdjustment()));
         shooterDown.onTrue(new InstantCommand(() -> m_shooter.decreaseManualAdjustment()));
+        shooterAdjustZero.onTrue(new InstantCommand(() -> m_shooter.zeroManualAdjustment()));
         
 
 

@@ -404,4 +404,8 @@ public class Shooter extends SubsystemBase {
     manualSpeedAdjustment -= 10;
     adjustToMaxMinManualAdjustment();
   }
+
+  public void zeroManualAdjustment(){
+    manualSpeedAdjustment = 0;
+  }
 }
