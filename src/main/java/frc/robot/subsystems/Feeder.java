@@ -30,7 +30,7 @@ public class Feeder extends SubsystemBase {
     feederConfigFront.idleMode(IdleMode.kBrake);
     feederConfigBack.idleMode(IdleMode.kBrake);
 
-    feederConfigFront.smartCurrentLimit(30, 30);
+    feederConfigFront.smartCurrentLimit(45, 45);
     feederConfigBack.smartCurrentLimit(30, 30);
 
     feederMotorFront.configure(feederConfigFront, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
