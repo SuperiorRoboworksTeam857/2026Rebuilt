@@ -152,11 +152,6 @@ public final class Constants {
 
     public static final double intakeExtendedPosition = 11;
     public static final double intakeContractedPosition = 0;
-
-    // PID constants for the extension
-    public static final double intakeKP = 0.1;
-    public static final double intakeKI = 0;
-    public static final double intakeKD = 0;
   }
 
 }
