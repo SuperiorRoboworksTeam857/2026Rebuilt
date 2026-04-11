@@ -28,11 +28,11 @@ public class Spindexer extends SubsystemBase {
 
   public Spindexer() {
     spindexerConfig.idleMode(IdleMode.kBrake);
-
+    spindexerConfig.smartCurrentLimit(15, 15);
     spindexerMotor.configure(spindexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     spindexerAgitatorConfig.idleMode(IdleMode.kCoast);
-
+    spindexerAgitatorConfig.smartCurrentLimit(15, 15);
     spindexerAgitator.configure(spindexerConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 

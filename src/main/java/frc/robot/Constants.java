@@ -117,7 +117,7 @@ public final class Constants {
   public static final class SpindexerConstants {
     public static final int spindexerWheel = 24; // will spin in the center
     public static final int spindexerAgitator = 30; //top roller above spindexer
-    public static final double spindexerSpeedMultiplier = 1.4; // basic speed multiplier
+    public static final double spindexerSpeedMultiplier = 1; // basic speed multiplier
     public static final double spindexerAgitatorMultiplier = .7;
   }
 
